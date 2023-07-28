@@ -1,0 +1,8 @@
+@import '../__builtins__/styles/common.scss';
+
+$page-grid-item-prefix: '#{$bee-prefix}-page-grid-item';
+.#{$page-grid-item-prefix} {
+  > * {
+    width: 100%;
+  }
+}

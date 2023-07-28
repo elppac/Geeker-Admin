@@ -1,15 +1,16 @@
 <template>
   <div class="tool-bar-ri">
-    <div class="header-icon">
+    <el-space direction="horizontal" alignment="center" :size="12">
       <AssemblySize id="assemblySize" />
-      <Language id="language" />
       <SearchMenu id="searchMenu" />
       <ThemeSetting id="themeSetting" />
       <Message id="message" />
       <Fullscreen id="fullscreen" />
-    </div>
-    <span class="username">{{ username }}</span>
-    <Avatar />
+      <div>
+        <Avatar /> <span class="username">{{ username }}</span>
+      </div>
+      <Language id="language" />
+    </el-space>
   </div>
 </template>
 
@@ -33,18 +34,20 @@ const username = computed(() => userStore.userInfo.name);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-right: 25px;
-  .header-icon {
-    display: flex;
-    align-items: center;
-    & > * {
-      margin-left: 21px;
-      color: var(--el-header-text-color);
+  :deep(.toolbar-icon) {
+    padding: 6px;
+    font-size: 18px;
+    color: var(--el-header-text-color);
+    &:hover {
+      --new-color: color-mix(in srgb, var(--el-header-text-color), var(--el-header-bg-color) 90%);
+
+      background-color: var(--new-color);
+      border-radius: 4px;
     }
   }
   .username {
-    margin: 0 20px;
-    font-size: 15px;
+    margin-left: 8px;
+    font-size: 14px;
     color: var(--el-header-text-color);
   }
 }

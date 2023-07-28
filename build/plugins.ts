@@ -9,6 +9,11 @@ import vueJsx from "@vitejs/plugin-vue-jsx";
 import eslintPlugin from "vite-plugin-eslint";
 import viteCompression from "vite-plugin-compression";
 import vueSetupExtend from "unplugin-vue-setup-extend-plus/vite";
+import vitePluginImp from "vite-plugin-imp";
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import ElementPlus from "unplugin-element-plus/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 /**
  * 创建 vite 插件
@@ -20,6 +25,38 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
     vue(),
     // vue 可以使用 jsx/tsx 语法
     vueJsx(),
+    vitePluginImp({
+      libList: [
+        {
+          libName: "@formily/element-plus",
+          libDirectory: "esm",
+          style(name) {
+            return `@formily/element-plus/esm/${name}/style.js`;
+          }
+        },
+        {
+          libName: "element-plus",
+          libDirectory: "esm",
+          style(name) {
+            console.log(name);
+            if (name.indexOf("el") === 0) {
+              return `element-plus/theme-chalk/${name}.css`;
+            }
+            return false;
+          }
+        }
+      ]
+    }),
+
+    AutoImport({
+      resolvers: [ElementPlusResolver()]
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()]
+    }),
+    // ElementPlus({
+    //   useSource: true
+    // }),
     // esLint 报错信息显示在浏览器界面上
     eslintPlugin(),
     // name 可以写在 script 标签上
@@ -37,6 +74,7 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
       iconDirs: [resolve(process.cwd(), "src/assets/icons")],
       symbolId: "icon-[dir]-[name]"
     }),
+
     // vitePWA
     VITE_PWA && createVitePwa(viteEnv),
     // 是否生成包预览，分析依赖包大小做优化处理

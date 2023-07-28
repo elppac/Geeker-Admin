@@ -4,7 +4,7 @@ import { DEFAULT_PRIMARY } from "@/config";
 import piniaPersistConfig from "@/config/piniaPersist";
 
 export const useGlobalStore = defineStore({
-  id: "geeker-global",
+  id: "gram-global",
   // 修改默认值之后，需清除 localStorage 数据
   state: (): GlobalState => ({
     // 布局模式 (纵向：vertical | 经典：classic | 横向：transverse | 分栏：columns)
@@ -47,5 +47,5 @@ export const useGlobalStore = defineStore({
       this.$patch({ [args[0]]: args[1] });
     }
   },
-  persist: piniaPersistConfig("geeker-global")
+  persist: piniaPersistConfig("gram-global")
 });

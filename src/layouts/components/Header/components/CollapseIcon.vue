@@ -1,7 +1,12 @@
 <template>
-  <el-icon class="collapse-icon" @click="changeCollapse">
+  <!-- <el-icon class="collapse-icon" @click="changeCollapse">
     <component :is="globalStore.isCollapse ? 'expand' : 'fold'"></component>
-  </el-icon>
+  </el-icon> -->
+  <i
+    class="collapse-icon iconfont"
+    :class="globalStore.isCollapse ? 'icon-menu-unfold' : 'icon-menu-fold'"
+    @click="changeCollapse"
+  ></i>
 </template>
 
 <script setup lang="ts">

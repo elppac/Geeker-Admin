@@ -12,3 +12,11 @@
   font-family: DIN;
   src: url("./DIN.Otf");
 }
+
+@font-face {
+  font-family: AlibabaPuHuiTi;
+  font-weight: 400;
+  src: url("./AlibabaPuHuiTi.woff2") format("woff2"),
+    url("./AlibabaPuHuiTi.woff") format("woff");
+  font-display: swap;
+}

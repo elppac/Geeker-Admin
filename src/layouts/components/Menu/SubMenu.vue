@@ -2,17 +2,19 @@
   <template v-for="subItem in menuList" :key="subItem.path">
     <el-sub-menu v-if="subItem.children?.length" :index="subItem.path">
       <template #title>
-        <el-icon>
+        <el-icon v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === -1">
           <component :is="subItem.meta.icon"></component>
         </el-icon>
+        <i v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === 0" class="iconfont" :class="subItem.meta.icon"></i>
         <span class="sle">{{ subItem.meta.title }}</span>
       </template>
       <SubMenu :menu-list="subItem.children" />
     </el-sub-menu>
     <el-menu-item v-else :index="subItem.path" @click="handleClickMenu(subItem)">
-      <el-icon>
+      <el-icon v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === -1">
         <component :is="subItem.meta.icon"></component>
       </el-icon>
+      <i v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === 0" class="iconfont" :class="subItem.meta.icon"></i>
       <template #title>
         <span class="sle">{{ subItem.meta.title }}</span>
       </template>
@@ -33,6 +35,14 @@ const handleClickMenu = (subItem: Menu.MenuOptions) => {
 </script>
 
 <style lang="scss">
+.el-sub-menu .el-sub-menu__title {
+  .iconfont {
+    width: var(--el-menu-icon-width);
+    margin-right: 5px;
+    font-size: 18px;
+    text-align: center;
+  }
+}
 .el-sub-menu .el-sub-menu__title:hover {
   color: var(--el-menu-hover-text-color) !important;
   background-color: transparent !important;
@@ -46,6 +56,12 @@ const handleClickMenu = (subItem: Menu.MenuOptions) => {
   }
 }
 .el-menu-item {
+  .iconfont {
+    width: var(--el-menu-icon-width);
+    margin-right: 5px;
+    font-size: 18px;
+    text-align: center;
+  }
   &:hover {
     color: var(--el-menu-hover-text-color);
   }

@@ -20,12 +20,12 @@
         width: 210px;
         margin-right: 16px;
         .logo-img {
-          width: 28px;
+          width: 32px;
           object-fit: contain;
-          margin-right: 6px;
+          margin-inline-end: 12px;
         }
         .logo-text {
-          font-size: 21.5px;
+          font-size: 18px;
           font-weight: bold;
           color: var(--el-header-logo-text-color);
           white-space: nowrap;

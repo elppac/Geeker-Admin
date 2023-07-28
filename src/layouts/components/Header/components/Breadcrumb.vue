@@ -4,9 +4,19 @@
       <transition-group name="breadcrumb">
         <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="item.path">
           <div class="el-breadcrumb__inner is-link" @click="onBreadcrumbClick(item, index)">
-            <el-icon v-show="item.meta.icon && globalStore.breadcrumbIcon" class="breadcrumb-icon">
+            <el-icon
+              v-if="item.meta.icon && item.meta.icon.indexOf('icon') === -1"
+              v-show="item.meta.icon && globalStore.breadcrumbIcon"
+              class="breadcrumb-icon"
+            >
               <component :is="item.meta.icon"></component>
             </el-icon>
+            <i
+              v-if="item.meta.icon && item.meta.icon.indexOf('icon') === 0"
+              class="breadcrumb-icon iconfont"
+              :class="item.meta.icon"
+            ></i>
+
             <span class="breadcrumb-title">{{ item.meta.title }}</span>
           </div>
         </el-breadcrumb-item>
@@ -32,7 +42,7 @@ const breadcrumbList = computed(() => {
   let breadcrumbData = authStore.breadcrumbListGet[route.matched[route.matched.length - 1].path] ?? [];
   // 🙅‍♀️不需要首页面包屑可删除以下判断
   if (breadcrumbData[0].path !== HOME_URL) {
-    breadcrumbData = [{ path: HOME_URL, meta: { icon: "HomeFilled", title: "首页" } }, ...breadcrumbData];
+    breadcrumbData = [{ path: HOME_URL, meta: { icon: "icon-home", title: "首页" } }, ...breadcrumbData];
   }
   return breadcrumbData;
 });
@@ -57,10 +67,19 @@ const onBreadcrumbClick = (item: Menu.MenuOptions, index: number) => {
       .el-breadcrumb__inner {
         display: inline-flex;
         &.is-link {
+          font-weight: 400;
           color: var(--el-header-text-color);
+          .breadcrumb-title {
+            font-weight: 500;
+          }
           &:hover {
             color: var(--el-color-primary);
           }
+        }
+        .iconfont {
+          position: relative;
+          top: -2px;
+          line-height: 18px;
         }
         .breadcrumb-icon {
           margin-top: 2px;

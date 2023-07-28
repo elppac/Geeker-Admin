@@ -48,6 +48,7 @@ const globalStore = useGlobalStore();
 const isCollapse = computed(() => globalStore.isCollapse);
 const menuList = computed(() => authStore.showMenuListGet);
 const activeMenu = computed(() => (route.meta.activeMenu ? route.meta.activeMenu : route.path) as string);
+// const isDark = computed(() => globalStore.isDark);
 </script>
 
 <style scoped lang="scss">

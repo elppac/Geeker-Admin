@@ -4,7 +4,7 @@ import { TabsState, TabsMenuProps } from "@/stores/interface";
 import piniaPersistConfig from "@/config/piniaPersist";
 
 export const useTabsStore = defineStore({
-  id: "geeker-tabs",
+  id: "gram-tabs",
   state: (): TabsState => ({
     tabsMenuList: []
   }),
@@ -46,5 +46,5 @@ export const useTabsStore = defineStore({
       });
     }
   },
-  persist: piniaPersistConfig("geeker-tabs")
+  persist: piniaPersistConfig("gram-tabs")
 });

@@ -1,7 +1,5 @@
 <template>
-  <div class="footer flx-center">
-    <a href="https://github.com/HalseySpicy" target="_blank"> 2022 © Geeker-Admin By Geeker Technology. </a>
-  </div>
+  <div class="footer flx-center">© 2023-present Made with love by F2E</div>
 </template>
 
 <style scoped lang="scss">

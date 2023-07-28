@@ -1,18 +1,37 @@
 <template>
-  <Maximize v-if="maximize" />
-  <Tabs v-if="tabs" />
-  <el-main>
-    <router-view v-slot="{ Component, route }">
-      <transition appear name="fade-transform" mode="out-in">
-        <keep-alive :include="keepAliveName">
-          <component :is="Component" v-if="isRouterShow" :key="route.fullPath" />
-        </keep-alive>
-      </transition>
-    </router-view>
-  </el-main>
-  <el-footer v-if="footer">
-    <Footer />
-  </el-footer>
+  <div>
+    <Maximize v-if="maximize" />
+    <Tabs v-if="tabs" />
+    <el-main>
+      <router-view v-slot="{ Component, route }">
+        <transition appear name="fade-transform" mode="out-in">
+          <keep-alive :include="keepAliveName">
+            <div>
+              <component :is="Component" v-if="isRouterShow" :key="route.fullPath" />
+            </div>
+          </keep-alive>
+        </transition>
+      </router-view>
+      <!-- <router-view v-slot="{ Component }">
+        <transition :name="$router.customRouterData.transitionName">
+          <keep-alive>
+            <div :key="$route.name">
+              <component :is="Component" v-if="$route.meta.keepAlive" />
+            </div>
+          </keep-alive>
+        </transition>
+
+        <transition :name="$router.customRouterData.transitionName">
+          <div :key="$route.name">
+            <component :is="Component" v-if="!$route.meta.keepAlive" />
+          </div>
+        </transition>
+      </router-view> -->
+    </el-main>
+    <el-footer v-if="footer">
+      <Footer />
+    </el-footer>
+  </div>
 </template>
 
 <script setup lang="ts">

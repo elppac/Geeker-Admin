@@ -1,8 +1,6 @@
 <template>
   <el-dropdown trigger="click">
-    <div class="avatar">
-      <img src="@/assets/images/avatar.gif" alt="avatar" />
-    </div>
+    <el-avatar :icon="UserFilled" :size="26" />
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item @click="openDialog('infoRef')">
@@ -32,6 +30,7 @@ import { useUserStore } from "@/stores/modules/user";
 import { ElMessageBox, ElMessage } from "element-plus";
 import InfoDialog from "./InfoDialog.vue";
 import PasswordDialog from "./PasswordDialog.vue";
+import { UserFilled } from "@element-plus/icons-vue";
 
 const router = useRouter();
 const userStore = useUserStore();

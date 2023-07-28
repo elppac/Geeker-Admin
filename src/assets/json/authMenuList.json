@@ -6,7 +6,7 @@
       "name": "home",
       "component": "/home/index",
       "meta": {
-        "icon": "HomeFilled",
+        "icon": "icon-home",
         "title": "首页",
         "isLink": "",
         "isHide": false,
@@ -14,6 +14,36 @@
         "isAffix": true,
         "isKeepAlive": true
       }
+    },
+    {
+      "path": "/product",
+      "name": "product",
+      "redirect": "/product/itemList",
+      "meta": {
+        "icon": "icon-shopping",
+        "title": "商品管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
+        {
+          "path": "/product/itemList",
+          "name": "general",
+          "component": "/general/index",
+          "meta": {
+            "icon": "icon-table",
+            "title": "商品详情",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        }
+      ]
     },
     {
       "path": "/dataScreen",
@@ -961,7 +991,7 @@
           "meta": {
             "icon": "Menu",
             "title": "Gitee 仓库",
-            "isLink": "https://gitee.com/HalseySpicy/Geeker-Admin",
+            "isLink": "https://gitee.com/HalseySpicy/Gram-Tech",
             "isHide": false,
             "isFull": false,
             "isAffix": false,
@@ -975,7 +1005,7 @@
           "meta": {
             "icon": "Menu",
             "title": "GitHub 仓库",
-            "isLink": "https://github.com/HalseySpicy/Geeker-Admin",
+            "isLink": "https://github.com/HalseySpicy/Gram-Tech",
             "isHide": false,
             "isFull": false,
             "isAffix": false,

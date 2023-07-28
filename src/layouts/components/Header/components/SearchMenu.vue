@@ -1,6 +1,6 @@
 <template>
   <div class="menu-search-dialog">
-    <i :class="'iconfont icon-sousuo'" class="toolBar-icon" @click="handleOpen"></i>
+    <i :class="'iconfont icon-mac-command'" class="toolbar-icon" @click="handleOpen"></i>
     <el-dialog v-model="isShowSearch" destroy-on-close :modal="false" :show-close="false" fullscreen @click="closeSearch">
       <el-autocomplete
         ref="menuInputRef"
