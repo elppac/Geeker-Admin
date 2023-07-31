@@ -11,8 +11,6 @@ import viteCompression from "vite-plugin-compression";
 import vueSetupExtend from "unplugin-vue-setup-extend-plus/vite";
 import vitePluginImp from "vite-plugin-imp";
 import AutoImport from "unplugin-auto-import/vite";
-import Components from "unplugin-vue-components/vite";
-// import ElementPlus from "unplugin-element-plus/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { viteExternalsPlugin } from "vite-plugin-externals";
 
@@ -37,17 +35,6 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
           libDirectory: "esm",
           style(name) {
             return `@formily/element-plus/esm/${name}/style.js`;
-          }
-        },
-        {
-          libName: "element-plus",
-          libDirectory: "esm",
-          style(name) {
-            // console.log(name);
-            if (name.indexOf("el") === 0) {
-              return `element-plus/theme-chalk/${name}.css`;
-            }
-            return false;
           }
         }
       ]
