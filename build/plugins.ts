@@ -12,8 +12,9 @@ import vueSetupExtend from "unplugin-vue-setup-extend-plus/vite";
 import vitePluginImp from "vite-plugin-imp";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
-import ElementPlus from "unplugin-element-plus/vite";
+// import ElementPlus from "unplugin-element-plus/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import { viteExternalsPlugin } from "vite-plugin-externals";
 
 /**
  * 创建 vite 插件
@@ -25,6 +26,10 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
     vue(),
     // vue 可以使用 jsx/tsx 语法
     vueJsx(),
+    viteExternalsPlugin({
+      vue: "Vue",
+      "element-plus": "ElementPlus"
+    }),
     vitePluginImp({
       libList: [
         {
@@ -38,7 +43,7 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
           libName: "element-plus",
           libDirectory: "esm",
           style(name) {
-            console.log(name);
+            // console.log(name);
             if (name.indexOf("el") === 0) {
               return `element-plus/theme-chalk/${name}.css`;
             }
@@ -47,16 +52,9 @@ export const createVitePlugins = (viteEnv: ViteEnv): (PluginOption | PluginOptio
         }
       ]
     }),
-
     AutoImport({
       resolvers: [ElementPlusResolver()]
     }),
-    Components({
-      resolvers: [ElementPlusResolver()]
-    }),
-    // ElementPlus({
-    //   useSource: true
-    // }),
     // esLint 报错信息显示在浏览器界面上
     eslintPlugin(),
     // name 可以写在 script 标签上
