@@ -1,8 +1,3 @@
-import { type Component, type VNode } from 'vue'
+import { type Component, type VNode } from "vue";
 
-export type SlotTypes =
-  | Component
-  | string
-  | number
-  | ((props: Record<string, any>) => VNode[] | VNode)
-  | VNode
+export type SlotTypes = Component | string | number | ((props: Record<string, any>) => VNode[] | VNode) | VNode;

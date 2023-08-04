@@ -87,6 +87,7 @@
 </template>
 
 <script setup lang="ts" name="ProTable">
+import * as _ from "lodash-es";
 import { ref, watch, computed, provide, onMounted } from "vue";
 import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
@@ -100,8 +101,10 @@ import Pagination from "./components/Pagination.vue";
 import ColSetting from "./components/ColSetting.vue";
 import TableColumn from "./components/TableColumn.vue";
 import printJS from "print-js";
+import { usePageStore } from "@/stores/modules/page";
 
 export interface ProTableProps {
+  searchbarColumns?: any[];
   columns: ColumnProps[]; // 列配置项  ==> 必传
   data?: any[]; // 静态 table data 数据，若存在则不会使用 requestApi 返回的 data ==> 非必传
   requestApi?: (params: any) => Promise<any>; // 请求表格数据的 api ==> 非必传
@@ -117,8 +120,29 @@ export interface ProTableProps {
   searchCol?: number | Record<BreakPoint, number>; // 表格搜索项 每列占比配置 ==> 非必传 { xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }
 }
 
+const useEnum = (
+  callback: (data: any[]) => void,
+  params: {
+    uniqueKey: string;
+    source: {
+      type: string;
+      value: any;
+    };
+  }
+) => {
+  const pageStore = usePageStore();
+  const data = computed(() => {
+    return _.get(pageStore.enum, `${params.uniqueKey}.data`) ?? undefined;
+  });
+  watch(data, () => {
+    callback(data?.value);
+  });
+  pageStore.putEnum(params.uniqueKey, params.source);
+};
+
 // 接受父组件参数，配置默认值
 const props = withDefaults(defineProps<ProTableProps>(), {
+  searchbarColumns: () => [],
   columns: () => [],
   requestAuto: true,
   pagination: true,
@@ -158,6 +182,19 @@ const tableColumns = ref<ColumnProps[]>(props.columns);
 const enumMap = ref(new Map<string, { [key: string]: any }[]>());
 provide("enumMap", enumMap);
 const setEnumMap = async (col: ColumnProps) => {
+  if (col.bizType === "enum") {
+    useEnum(
+      data => {
+        console.log(col.prop!, data);
+        enumMap.value.set(col.prop!, data);
+      },
+      {
+        uniqueKey: col.prop as string,
+        source: col.source
+      }
+    );
+    return;
+  }
   if (!col.enum) return;
   // 如果当前 enum 为后台数据需要请求数据，则调用该请求接口，并存储到 enumMap
   if (typeof col.enum !== "function") return enumMap.value.set(col.prop!, col.enum!);
@@ -184,21 +221,25 @@ const flatColumnsFunc = (columns: ColumnProps[], flatArr: ColumnProps[] = []) =>
 // flatColumns
 const flatColumns = ref<ColumnProps[]>();
 flatColumns.value = flatColumnsFunc(tableColumns.value);
-
 // 过滤需要搜索的配置项
-const searchColumns = flatColumns.value.filter(item => item.search?.el || item.search?.render);
-
-// 设置搜索表单排序默认值 && 设置搜索表单项的默认值
-searchColumns.forEach((column, index) => {
-  column.search!.order = column.search!.order ?? index + 2;
-  if (column.search?.defaultValue !== undefined && column.search?.defaultValue !== null) {
-    searchInitParam.value[column.search.key ?? handleProp(column.prop!)] = column.search?.defaultValue;
-    searchParam.value[column.search.key ?? handleProp(column.prop!)] = column.search?.defaultValue;
-  }
-});
-
-// 排序搜索表单项
-searchColumns.sort((a, b) => a.search!.order! - b.search!.order!);
+const searchbarColumns = ref<ColumnProps[]>(props.searchbarColumns);
+let searchColumns: ColumnProps[] = [];
+if (searchbarColumns.value) {
+  // 从父级传入
+  searchColumns = searchbarColumns.value;
+} else {
+  searchColumns = flatColumns.value.filter(item => item.search?.el || item.search?.render);
+  // 设置搜索表单排序默认值 && 设置搜索表单项的默认值
+  searchColumns.forEach((column, index) => {
+    column.search!.order = column.search!.order ?? index + 2;
+    if (column.search?.defaultValue !== undefined && column.search?.defaultValue !== null) {
+      searchInitParam.value[column.search.key ?? handleProp(column.prop!)] = column.search?.defaultValue;
+      searchParam.value[column.search.key ?? handleProp(column.prop!)] = column.search?.defaultValue;
+    }
+  });
+  // 排序搜索表单项
+  searchColumns.sort((a, b) => a.search!.order! - b.search!.order!);
+}
 
 // 列设置 ==> 过滤掉不需要设置的列
 const colRef = ref();

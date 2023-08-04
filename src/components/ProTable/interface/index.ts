@@ -76,6 +76,8 @@ export interface ColumnProps<T = any> extends Partial<Omit<TableColumnCtx<T>, "c
   headerRender?: (scope: HeaderRenderScope<T>) => VNode; // 自定义表头内容渲染（tsx语法）
   render?: (scope: RenderScope<T>) => VNode | string; // 自定义单元格内容渲染（tsx语法）
   _children?: ColumnProps<T>[]; // 多级表头
+  source: { type: string; value: any };
+  bizType: string;
 }
 
 export type ProTableInstance = Omit<InstanceType<typeof ProTable>, keyof ComponentPublicInstance | keyof ProTableProps>;

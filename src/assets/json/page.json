@@ -1,0 +1,194 @@
+{
+  "version": "md5",
+  "title": "用户列表",
+  "name": "user",
+  "x-schema": {
+    "type": "object",
+    "properties": {
+      "root": {
+        "type": "void",
+        "x-component": "TreeTable",
+        "x-component-props": {
+          "treeFilter": { "source": { "type": "model", "value": "department" } },
+          "operations": [
+            {
+              "title": "导入Excel",
+              "name": "importExcel"
+            },
+            {
+              "title": "导出Excel",
+              "name": "exportExcel"
+            },
+            {
+              "title": "导出配置",
+              "name": "exportSettings"
+            },
+            {
+              "title": "打印",
+              "name": "print"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "x-reactions": {},
+  "x-model": [
+    {
+      "name": "id",
+      "title": "ID",
+      "type": "integer",
+      "maxLength": 20,
+      "isKey": true,
+      "required": true
+    },
+    {
+      "name": "avatar",
+      "title": "用户头像",
+      "type": "string",
+      "bizType": "image",
+      "description": "头像大小不能超过 3M",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "username",
+      "title": "用户姓名",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "gender",
+      "title": "性别",
+      "type": "string",
+      "bizType": "enum",
+      "default": {
+        "type": "static",
+        "value": 0
+      },
+      "source": {
+        "type": "static",
+        "value": [
+          { "value": 2, "label": "女" },
+          { "value": 1, "label": "男" }
+        ]
+      },
+      "required": true
+    },
+    {
+      "name": "idCard",
+      "title": "身份证",
+      "type": "integer",
+      "maxLength": 20,
+      "isKey": true,
+      "required": true
+    },
+    {
+      "name": "email",
+      "title": "邮箱",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "address",
+      "title": "地址",
+      "type": "string",
+      "maxLength": 2000
+    },
+    {
+      "name": "createTime",
+      "title": "创建时间",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "title": "状态",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "status"
+      },
+      "maxLength": 20,
+      "required": true
+    }
+  ],
+  "x-field-extra": {
+    "abc": {
+      "list": {
+        "width": 100,
+        "render": "cellrender",
+        "sortable": "true"
+      }
+    },
+    "status": {
+      "list": {
+        "tag": true,
+        "fieldNames": { "label": "userLabel", "value": "userStatus" }
+      },
+      "search": {
+        "fieldNames": { "label": "userLabel", "value": "userStatus" }
+      }
+    }
+  },
+  "x-scenes": {
+    "search": {
+      "name": "searchbar",
+      "title": "用户搜索",
+      "fields": ["gender", "username", "email", "status"]
+    },
+    "list": {
+      "name": "list",
+      "title": "用户管理",
+      "fields": ["username", "gender", "idCard", "email", "address", "status"]
+    },
+    "edit": {
+      "name": "edit",
+      "title": "用户编辑",
+      "layout": {
+        "type": "void",
+        "x-component": "Tab",
+        "items": [
+          {
+            "type": "void",
+            "title": "基本信息",
+            "x-component": "Tab.TabPane",
+            "items": [
+              {
+                "type": "void",
+                "title": "基本信息",
+                "x-component": "Box",
+                "fields": ["username", "gender", "idCard"]
+              },
+              {
+                "type": "void",
+                "title": "更多信息",
+                "x-component": "Box",
+                "fields": ["email"]
+              }
+            ]
+          },
+          {
+            "type": "void",
+            "title": "图片信息",
+            "x-component": "Tab.TabPane",
+            "items": [
+              {
+                "type": "void",
+                "title": "图片信息",
+                "x-component": "Box",
+                "fields": ["avatar"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "view": {
+      "name": "view",
+      "title": "商品查看"
+    }
+  }
+}

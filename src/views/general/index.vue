@@ -1,27 +1,43 @@
-<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
-  <FormProvider :form="form">
-    <FormLayout :breakpoints="[680]" layout="horizontal" label-align="left" :label-col="6" :wrapper-col="10">
-      <Button>Button</Button>
-    </FormLayout>
-    <Field name="input2" :component="[Input, { placeholder: '请输入 22' }]" />
-  </FormProvider>
+  <div v-if="pageSchema">
+    <PageProvider :page="page">
+      <SchemaField :schema="pageSchema" />
+    </PageProvider>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { createForm } from "@formily/core";
-import { FormLayout } from "@formily/element-plus";
-import { FormProvider, Field } from "@formily/vue";
-import { ElInput as Input, ElButton as Button } from "element-plus";
-// import { onRenderTracked, onRenderTriggered } from "vue";
+<script setup lang="ts" name="general">
+import { computed, onMounted, onBeforeUnmount } from "vue";
+import { useRoute } from "vue-router";
+import { PageProvider, createPage, createSchemaField } from "@/bee/vue";
+import TreeTable from "@/components/TreeTable/index.vue";
+import { useAppStore } from "@/stores/modules/app";
+import { usePageStore } from "@/stores/modules/page";
 
-// onRenderTracked(event => {
-//   debugger;
-// });
+const route = useRoute();
+const pageName = route.name as string;
+// const pageReactive = reactive<any>({ pageSchema: undefined });
+const appStore = useAppStore();
+const pageStore = usePageStore();
 
-// onRenderTriggered(event => {
-//   debugger;
-// });
+onMounted(async () => {
+  await appStore.setCurrentPageName(pageName);
+  await appStore.getPage(pageName);
+  // console.log(pageStore.pageState);
+});
 
-const form = createForm();
+onBeforeUnmount(() => {
+  console.log("unmounted", pageName);
+  pageStore.$reset();
+});
+console.log("render page ", pageName);
+
+const pageSchema = computed(() => appStore.pageSchema);
+
+const page = createPage();
+const { SchemaField } = createSchemaField({
+  components: {
+    TreeTable
+  }
+});
 </script>

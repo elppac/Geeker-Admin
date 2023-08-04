@@ -1,7 +1,7 @@
-import { inject, type Ref, ref } from 'vue-demi'
-import { FieldSymbol } from '../shared/context'
-import type { GeneralField } from '../../core/types'
+import { inject, type Ref, ref } from "vue";
+import { FieldSymbol } from "../shared/context";
+import type { GeneralField } from "../../core/types";
 
 export const useField = <T = GeneralField>(): Ref<T> => {
-  return inject(FieldSymbol, ref()) as any
-}
+  return inject(FieldSymbol, ref()) as any;
+};

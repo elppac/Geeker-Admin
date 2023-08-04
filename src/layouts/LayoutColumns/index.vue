@@ -79,7 +79,7 @@ watch(
     const menuItem = menuList.value.filter((item: Menu.MenuOptions) => {
       return route.path === item.path || `/${route.path.split("/")[1]}` === item.path;
     });
-    if (menuItem[0].children?.length) return (subMenuList.value = menuItem[0].children);
+    if (menuItem[0]?.children?.length) return (subMenuList.value = menuItem[0].children);
     subMenuList.value = [];
   },
   {

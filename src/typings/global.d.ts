@@ -53,6 +53,7 @@ declare interface ViteEnv {
   VITE_PUBLIC_PATH: string;
   VITE_API_URL: string;
   VITE_PROXY: [string, string][];
+  ENGINE: "JUST" | "CODE";
 }
 
 interface ImportMetaEnv extends ViteEnv {

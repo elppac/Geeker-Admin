@@ -16,12 +16,12 @@
       }
     },
     {
-      "path": "/product",
-      "name": "product",
+      "path": "/p1",
+      "name": "p1",
       "redirect": "/product/itemList",
       "meta": {
         "icon": "icon-shopping",
-        "title": "商品管理",
+        "title": "商品",
         "isLink": "",
         "isHide": false,
         "isFull": false,
@@ -30,18 +30,62 @@
       },
       "children": [
         {
-          "path": "/product/itemList",
-          "name": "general",
-          "component": "/general/index",
+          "path": "/p2",
+          "name": "p2",
+          "redirect": "/product/itemList",
           "meta": {
-            "icon": "icon-table",
-            "title": "商品详情",
+            "icon": "icon-shopping",
+            "title": "商品管理",
             "isLink": "",
             "isHide": false,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
-          }
+          },
+          "children": [
+            {
+              "path": "/product/list",
+              "name": "general",
+              "component": "/general/index",
+              "meta": {
+                "icon": "icon-table",
+                "title": "商品列表",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            },
+            {
+              "path": "/product/cloudlibraryitem",
+              "name": "cloudlibraryitem",
+              "component": "/general/index",
+              "meta": {
+                "icon": "icon-table",
+                "title": "商品分类",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            },
+            {
+              "path": "/product/cloudlibraryitemcategory",
+              "name": "cloudlibraryitemcategory",
+              "component": "/general/index",
+              "meta": {
+                "icon": "icon-table",
+                "title": "云库分类",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            }
+          ]
         }
       ]
     },

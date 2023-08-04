@@ -1,70 +1,50 @@
-import { toArr, type FormPathPattern } from '@formily/shared'
-import { define, observable, batch, action } from '@formily/reactive'
-import {
-  createReactions,
-  createStateSetter,
-  createStateGetter,
-  initializeStart,
-  initializeEnd,
-} from '../shared/internals'
-import {
-  type IModelSetter,
-  type IModelGetter,
-  type IVoidFieldProps,
-  type IVoidFieldState,
-} from '../types'
-import { Page } from './Page'
-import { BaseField } from './BaseField'
+import { toArr, type FormPathPattern } from "@formily/shared";
+import { define, observable, batch, action } from "@formily/reactive";
+import { createReactions, createStateSetter, createStateGetter, initializeStart, initializeEnd } from "../shared/internals";
+import { type IModelSetter, type IModelGetter, type IVoidFieldProps, type IVoidFieldState } from "../types";
+import { Page } from "./Page";
+import { BaseField } from "./BaseField";
 
-export class VoidField<
-  Decorator = any,
-  Component = any,
-  TextType = any
-> extends BaseField<Decorator, Component, TextType> {
-  displayName: 'VoidField' = 'VoidField'
-  props: IVoidFieldProps<Decorator, Component>
+export class VoidField<Decorator = any, Component = any, TextType = any> extends BaseField<Decorator, Component, TextType> {
+  displayName = "VoidField";
+  props: IVoidFieldProps<Decorator, Component>;
 
-  constructor(
-    address: FormPathPattern,
-    props: IVoidFieldProps<Decorator, Component>,
-    page: Page,
-    designable: boolean
-  ) {
-    super()
-    this.page = page
-    this.props = props
-    this.designable = designable
-    initializeStart()
-    this.locate(address)
-    this.initialize()
-    this.makeObservable()
-    this.makeReactive()
-    this.onInit()
-    initializeEnd()
+  constructor(address: FormPathPattern, props: IVoidFieldProps<Decorator, Component>, page: Page, designable: boolean) {
+    super();
+    this.page = page;
+    this.props = props;
+    this.designable = designable;
+    initializeStart();
+    this.locate(address);
+    this.initialize();
+    this.makeObservable();
+    this.makeReactive();
+    this.onInit();
+    initializeEnd();
   }
 
   protected initialize() {
-    this.mounted = false
-    this.unmounted = false
-    this.initialized = false
-    this.title = this.props.title
-    this.description = this.props.description
-    this.pattern = this.props.pattern
-    this.display = this.props.display
-    this.hidden = this.props.hidden
-    this.editable = this.props.editable
-    this.disabled = this.props.disabled
-    this.readOnly = this.props.readOnly
-    this.readPretty = this.props.readPretty
-    this.visible = this.props.visible
-    this.content = this.props.content
-    this.data = this.props.data
-    this.decorator = toArr(this.props.decorator)
-    this.component = toArr(this.props.component)
+    this.mounted = false;
+    this.unmounted = false;
+    this.initialized = false;
+    this.title = this.props.title;
+    this.description = this.props.description;
+    this.pattern = this.props.pattern;
+    this.display = this.props.display;
+    this.hidden = this.props.hidden;
+    this.editable = this.props.editable;
+    this.disabled = this.props.disabled;
+    this.readOnly = this.props.readOnly;
+    this.readPretty = this.props.readPretty;
+    this.visible = this.props.visible;
+    this.content = this.props.content;
+    this.data = this.props.data;
+    this.decorator = toArr(this.props.decorator);
+    this.component = toArr(this.props.component);
   }
 
   protected makeObservable() {
-    if (this.designable) return
+    if (this.designable) return;
     define(this, {
       path: observable.ref,
       title: observable.ref,
@@ -103,16 +83,16 @@ export class VoidField<
       setContent: action,
       onInit: batch,
       onMount: batch,
-      onUnmount: batch,
-    })
+      onUnmount: batch
+    });
   }
 
   protected makeReactive() {
-    if (this.designable) return
-    createReactions(this)
+    if (this.designable) return;
+    createReactions(this);
   }
 
-  setState: IModelSetter<IVoidFieldState> = createStateSetter(this)
+  setState: IModelSetter<IVoidFieldState> = createStateSetter(this);
 
-  getState: IModelGetter<IVoidFieldState> = createStateGetter(this)
+  getState: IModelGetter<IVoidFieldState> = createStateGetter(this);
 }

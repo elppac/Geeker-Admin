@@ -1,65 +1,34 @@
-import {
-  type IGeneralFieldState,
-  type GeneralField,
-  type FormPathPattern,
-} from '../core'
+import { type IGeneralFieldState, type GeneralField, type FormPathPattern } from "../core";
 export type SchemaEnum<Message> = Array<
   | string
   | number
   | boolean
   | { label?: Message; value?: any; [key: string]: any }
   | { key?: any; title?: Message; [key: string]: any }
->
+>;
 
-export type SchemaTypes =
-  | 'string'
-  | 'object'
-  | 'array'
-  | 'number'
-  | 'boolean'
-  | 'void'
-  | 'date'
-  | 'datetime'
-  | (string & {})
+export type SchemaTypes = "string" | "object" | "array" | "number" | "boolean" | "void" | "date" | "datetime" | (string & {});
 
-export type SchemaProperties<
-  Decorator,
-  Component,
-  DecoratorProps,
-  ComponentProps,
-  Pattern,
-  Display,
-  Validator,
-  Message
-> = Record<
+export type SchemaProperties<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message> = Record<
   string,
-  ISchema<
-    Decorator,
-    Component,
-    DecoratorProps,
-    ComponentProps,
-    Pattern,
-    Display,
-    Validator,
-    Message
-  >
->
+  ISchema<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>
+>;
 
-export type SchemaPatch = (schema: ISchema) => ISchema
+export type SchemaPatch = (schema: ISchema) => ISchema;
 
-export type SchemaKey = string | number
+export type SchemaKey = string | number;
 
 export type SchemaEffectTypes =
-  | 'onFieldInit'
-  | 'onFieldMount'
-  | 'onFieldUnmount'
-  | 'onFieldValueChange'
-  | 'onFieldInputValueChange'
-  | 'onFieldInitialValueChange'
-  | 'onFieldValidateStart'
-  | 'onFieldValidateEnd'
-  | 'onFieldValidateFailed'
-  | 'onFieldValidateSuccess'
+  | "onFieldInit"
+  | "onFieldMount"
+  | "onFieldUnmount"
+  | "onFieldValueChange"
+  | "onFieldInputValueChange"
+  | "onFieldInitialValueChange"
+  | "onFieldValidateStart"
+  | "onFieldValidateEnd"
+  | "onFieldValidateFailed"
+  | "onFieldValidateSuccess";
 
 export type SchemaReaction<Field = any> =
   | {
@@ -67,91 +36,62 @@ export type SchemaReaction<Field = any> =
         | Array<
             | string
             | {
-                name?: string
-                type?: string
-                source?: string
-                property?: string
+                name?: string;
+                type?: string;
+                source?: string;
+                property?: string;
               }
           >
-        | Record<string, string>
-      when?: string | boolean
-      target?: string
-      effects?: (SchemaEffectTypes | (string & {}))[]
+        | Record<string, string>;
+      when?: string | boolean;
+      target?: string;
+      effects?: (SchemaEffectTypes | (string & {}))[];
       fulfill?: {
-        state?: Stringify<IGeneralFieldState>
-        schema?: ISchema
-        run?: string
-      }
+        state?: Stringify<IGeneralFieldState>;
+        schema?: ISchema;
+        run?: string;
+      };
       otherwise?: {
-        state?: Stringify<IGeneralFieldState>
-        schema?: ISchema
-        run?: string
-      }
-      [key: string]: any
+        state?: Stringify<IGeneralFieldState>;
+        schema?: ISchema;
+        run?: string;
+      };
+      [key: string]: any;
     }
-  | ((field: Field, scope: any) => void)
+  | ((field: Field, scope: any) => void);
 
-export type SchemaReactions<Field = any> =
-  | SchemaReaction<Field>
-  | SchemaReaction<Field>[]
+export type SchemaReactions<Field = any> = SchemaReaction<Field> | SchemaReaction<Field>[];
 
-export type SchemaItems<
-  Decorator,
-  Component,
-  DecoratorProps,
-  ComponentProps,
-  Pattern,
-  Display,
-  Validator,
-  Message
-> =
-  | ISchema<
-      Decorator,
-      Component,
-      DecoratorProps,
-      ComponentProps,
-      Pattern,
-      Display,
-      Validator,
-      Message
-    >
-  | ISchema<
-      Decorator,
-      Component,
-      DecoratorProps,
-      ComponentProps,
-      Pattern,
-      Display,
-      Validator,
-      Message
-    >[]
+export type SchemaItems<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message> =
+  | ISchema<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>
+  | ISchema<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>[];
 
-export type SchemaComponents = Record<string, any>
+export type SchemaComponents = Record<string, any>;
 
 export interface ISchemaFieldUpdateRequest {
-  state?: Stringify<IGeneralFieldState>
-  schema?: ISchema
-  run?: string
+  state?: Stringify<IGeneralFieldState>;
+  schema?: ISchema;
+  run?: string;
 }
 
 export interface IFieldStateSetterOptions {
-  field: GeneralField
-  target?: FormPathPattern
-  request: ISchemaFieldUpdateRequest
-  runner?: string
-  scope?: any
+  field: GeneralField;
+  target?: FormPathPattern;
+  request: ISchemaFieldUpdateRequest;
+  runner?: string;
+  scope?: any;
 }
 
 export interface ISchemaTransformerOptions {
-  scope?: any
+  scope?: any;
 }
 
 export type Stringify<P extends { [key: string]: any }> = {
   /**
    * Use `string & {}` instead of string to keep Literal Type for ISchema#component and ISchema#decorator
    */
-  [key in keyof P]?: P[key] | string
-}
+  [key in keyof P]?: P[key] | string;
+};
 
 export type ISchema<
   Decorator = any,
@@ -164,74 +104,38 @@ export type ISchema<
   Message = any,
   ReactionField = any
 > = Stringify<{
-  version?: string
-  name?: SchemaKey
-  title?: Message
-  description?: Message
-  default?: any
-  readOnly?: boolean
-  writeOnly?: boolean
-  type?: SchemaTypes
-  enum?: SchemaEnum<Message>
-  const?: any
-  multipleOf?: number
-  maximum?: number
-  exclusiveMaximum?: number
-  minimum?: number
-  exclusiveMinimum?: number
-  maxLength?: number
-  minLength?: number
-  pattern?: string | RegExp
-  maxItems?: number
-  minItems?: number
-  uniqueItems?: boolean
-  maxProperties?: number
-  minProperties?: number
-  required?: string[] | boolean | string
-  format?: string
-  $ref?: string
-  $namespace?: string
+  version?: string;
+  name?: SchemaKey;
+  title?: Message;
+  description?: Message;
+  default?: any;
+  readOnly?: boolean;
+  writeOnly?: boolean;
+  type?: SchemaTypes;
+  enum?: SchemaEnum<Message>;
+  const?: any;
+  multipleOf?: number;
+  maximum?: number;
+  exclusiveMaximum?: number;
+  minimum?: number;
+  exclusiveMinimum?: number;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string | RegExp;
+  maxItems?: number;
+  minItems?: number;
+  uniqueItems?: boolean;
+  maxProperties?: number;
+  minProperties?: number;
+  required?: string[] | boolean | string;
+  format?: string;
+  $ref?: string;
+  $namespace?: string;
   /** nested json schema spec **/
-  definitions?: SchemaProperties<
-    Decorator,
-    Component,
-    DecoratorProps,
-    ComponentProps,
-    Pattern,
-    Display,
-    Validator,
-    Message
-  >
-  properties?: SchemaProperties<
-    Decorator,
-    Component,
-    DecoratorProps,
-    ComponentProps,
-    Pattern,
-    Display,
-    Validator,
-    Message
-  >
-  items?: SchemaItems<
-    Decorator,
-    Component,
-    DecoratorProps,
-    ComponentProps,
-    Pattern,
-    Display,
-    Validator,
-    Message
-  >
-  additionalItems?: ISchema<
-    Decorator,
-    Component,
-    DecoratorProps,
-    ComponentProps,
-    Pattern,
-    Display,
-    Validator,
-    Message
-  >
+  definitions?: SchemaProperties<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>;
+  properties?: SchemaProperties<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>;
+  items?: SchemaItems<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>;
+  additionalItems?: ISchema<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>;
   patternProperties?: SchemaProperties<
     Decorator,
     Component,
@@ -241,56 +145,47 @@ export type ISchema<
     Display,
     Validator,
     Message
-  >
-  additionalProperties?: ISchema<
-    Decorator,
-    Component,
-    DecoratorProps,
-    ComponentProps,
-    Pattern,
-    Display,
-    Validator,
-    Message
-  >
+  >;
+  additionalProperties?: ISchema<Decorator, Component, DecoratorProps, ComponentProps, Pattern, Display, Validator, Message>;
 
-  ['x-value']?: any
+  ["x-value"]?: any;
 
   //顺序描述
-  ['x-index']?: number
+  ["x-index"]?: number;
   //交互模式
-  ['x-pattern']?: Pattern
+  ["x-pattern"]?: Pattern;
   //展示状态
-  ['x-display']?: Display
+  ["x-display"]?: Display;
   //校验器
-  ['x-validator']?: Validator
+  ["x-validator"]?: Validator;
   //装饰器
-  ['x-decorator']?: Decorator | (string & {}) | ((...args: any[]) => any)
+  ["x-decorator"]?: Decorator | (string & {}) | ((...args: any[]) => any);
   //装饰器属性
-  ['x-decorator-props']?: DecoratorProps
+  ["x-decorator-props"]?: DecoratorProps;
   //组件
-  ['x-component']?: Component | (string & {}) | ((...args: any[]) => any)
+  ["x-component"]?: Component | (string & {}) | ((...args: any[]) => any);
   //组件属性
-  ['x-component-props']?: ComponentProps
+  ["x-component-props"]?: ComponentProps;
   //组件响应器
-  ['x-reactions']?: SchemaReactions<ReactionField>
+  ["x-reactions"]?: SchemaReactions<ReactionField>;
   //内容
-  ['x-content']?: any
+  ["x-content"]?: any;
 
-  ['x-data']?: any
+  ["x-data"]?: any;
 
-  ['x-visible']?: boolean
+  ["x-visible"]?: boolean;
 
-  ['x-hidden']?: boolean
+  ["x-hidden"]?: boolean;
 
-  ['x-disabled']?: boolean
+  ["x-disabled"]?: boolean;
 
-  ['x-editable']?: boolean
+  ["x-editable"]?: boolean;
 
-  ['x-read-only']?: boolean
+  ["x-read-only"]?: boolean;
 
-  ['x-read-pretty']?: boolean
+  ["x-read-pretty"]?: boolean;
 
-  ['x-compile-omitted']?: string[]
+  ["x-compile-omitted"]?: string[];
 
-  [key: `x-${string | number}` | symbol]: any
-}>
+  [key: `x-${string | number}` | symbol]: any;
+}>;

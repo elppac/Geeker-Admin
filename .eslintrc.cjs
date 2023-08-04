@@ -44,17 +44,20 @@ module.exports = {
     "@typescript-eslint/no-var-requires": "off", // 允许使用 require() 函数导入模块
     "@typescript-eslint/no-empty-function": "off", // 禁止空函数
     "@typescript-eslint/no-non-null-assertion": "off", // 不允许使用后缀运算符的非空断言(!)
+    "@typescript-eslint/adjacent-overload-signatures": "off", // Require that function overload signatures be consecutive.
+    "eslint-disable @typescript-eslint/no-unused-vars": "off", // 开发过程先关闭
 
     // vue (https://eslint.vuejs.org/rules)
     "vue/script-setup-uses-vars": "error", // 防止<script setup>使用的变量<template>被标记为未使用，此规则仅在启用该no-unused-vars规则时有效
     "vue/v-slot-style": "error", // 强制执行 v-slot 指令样式
-    "vue/no-mutating-props": "error", // 不允许改变组件 prop
+    "vue/no-mutating-props": "error", // 不允许改变组件 pro
     "vue/custom-event-name-casing": "error", // 为自定义事件名称强制使用特定大小写
     "vue/html-closing-bracket-newline": "error", // 在标签的右括号之前要求或禁止换行
     "vue/attribute-hyphenation": "error", // 对模板中的自定义组件强制执行属性命名样式：my-prop="prop"
     "vue/attributes-order": "off", // vue api使用顺序，强制执行属性顺序
     "vue/no-v-html": "off", // 禁止使用 v-html
     "vue/require-default-prop": "off", // 此规则要求为每个 prop 为必填时，必须提供默认值
-    "vue/multi-word-component-names": "off" // 要求组件名称始终为 “-” 链接的单词
+    "vue/multi-word-component-names": "off", // 要求组件名称始终为 “-” 链接的单词
+    "vue/no-setup-props-destructure": "off"
   }
 };

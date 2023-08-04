@@ -1,43 +1,39 @@
-import { inject, provide, computed, shallowRef, watch } from 'vue-demi'
-import { type ISchema, Schema, type SchemaTypes } from '../../json-schema'
-import { RecursionField } from '.'
-import {
-  SchemaMarkupSymbol,
-  SchemaExpressionScopeSymbol,
-  SchemaOptionsSymbol,
-} from '../shared'
+import { inject, provide, computed, shallowRef, watch } from "vue";
+import { type ISchema, Schema, type SchemaTypes } from "../../json-schema";
+import { RecursionField } from ".";
+import { SchemaMarkupSymbol, SchemaExpressionScopeSymbol, SchemaOptionsSymbol } from "../shared";
 import {
   type ISchemaFieldVueFactoryOptions,
   type SchemaVueComponents,
   type ISchemaFieldProps,
   type ISchemaMarkupFieldProps,
-  type ISchemaTypeFieldProps,
-} from '../types'
-import { resolveSchemaProps } from '../utils/resolveSchemaProps'
-import { h } from '../shared/h'
-import { Fragment } from '../shared/fragment'
-import type { DefineComponent } from '../types'
+  type ISchemaTypeFieldProps
+} from "../types";
+import { resolveSchemaProps } from "../utils/resolveSchemaProps";
+import { h } from "../shared/h";
+import { Fragment } from "../shared/fragment";
+import type { DefineComponent } from "../types";
 
 type SchemaFieldComponents = {
-  SchemaField: DefineComponent<ISchemaFieldProps>
-  SchemaMarkupField: DefineComponent<ISchemaMarkupFieldProps>
-  SchemaStringField: DefineComponent<ISchemaTypeFieldProps>
-  SchemaObjectField: DefineComponent<ISchemaTypeFieldProps>
-  SchemaArrayField: DefineComponent<ISchemaTypeFieldProps>
-  SchemaBooleanField: DefineComponent<ISchemaTypeFieldProps>
-  SchemaDateField: DefineComponent<ISchemaTypeFieldProps>
-  SchemaDateTimeField: DefineComponent<ISchemaTypeFieldProps>
-  SchemaVoidField: DefineComponent<ISchemaTypeFieldProps>
-  SchemaNumberField: DefineComponent<ISchemaTypeFieldProps>
-}
+  SchemaField: DefineComponent<ISchemaFieldProps>;
+  SchemaMarkupField: DefineComponent<ISchemaMarkupFieldProps>;
+  SchemaStringField: DefineComponent<ISchemaTypeFieldProps>;
+  SchemaObjectField: DefineComponent<ISchemaTypeFieldProps>;
+  SchemaArrayField: DefineComponent<ISchemaTypeFieldProps>;
+  SchemaBooleanField: DefineComponent<ISchemaTypeFieldProps>;
+  SchemaDateField: DefineComponent<ISchemaTypeFieldProps>;
+  SchemaDateTimeField: DefineComponent<ISchemaTypeFieldProps>;
+  SchemaVoidField: DefineComponent<ISchemaTypeFieldProps>;
+  SchemaNumberField: DefineComponent<ISchemaTypeFieldProps>;
+};
 
 const env = {
-  nonameId: 0,
-}
+  nonameId: 0
+};
 
 const getRandomName = () => {
-  return `NO_NAME_FIELD_$${env.nonameId++}`
-}
+  return `NO_NAME_FIELD_$${env.nonameId++}`;
+};
 
 const markupProps = {
   version: String,
@@ -47,11 +43,11 @@ const markupProps = {
   default: {},
   readOnly: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   writeOnly: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   enum: {},
   const: {},
@@ -67,13 +63,13 @@ const markupProps = {
   minItems: Number,
   uniqueItems: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   maxProperties: Number,
   minProperties: Number,
   required: {
     type: [Boolean, Array, String],
-    default: undefined,
+    default: undefined
   },
   format: String,
   properties: {},
@@ -93,35 +89,35 @@ const markupProps = {
   xContent: {},
   xVisible: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   xHidden: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   xDisabled: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   xEditable: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   xReadOnly: {
     type: Boolean,
-    default: undefined,
+    default: undefined
   },
   xReadPretty: {
     type: Boolean,
-    default: undefined,
-  },
-}
+    default: undefined
+  }
+};
 
-export function createSchemaField<
-  Components extends SchemaVueComponents = SchemaVueComponents
->(options: ISchemaFieldVueFactoryOptions<Components>): SchemaFieldComponents {
+export function createSchemaField<Components extends SchemaVueComponents = SchemaVueComponents>(
+  options: ISchemaFieldVueFactoryOptions<Components>
+): SchemaFieldComponents {
   const SchemaField = {
-    name: 'SchemaField',
+    name: "SchemaField",
     inheritAttrs: false,
     props: {
       schema: {},
@@ -132,54 +128,54 @@ export function createSchemaField<
       onlyRenderProperties: { type: Boolean, default: undefined },
       onlyRenderSelf: { type: Boolean, default: undefined },
       mapProperties: {},
-      filterProperties: {},
+      filterProperties: {}
     },
     setup(props: ISchemaFieldProps, { slots }) {
       const schemaRef = computed(() =>
         Schema.isSchemaInstance(props.schema)
           ? props.schema
           : new Schema({
-              type: 'object',
-              ...props.schema,
+              type: "object",
+              ...props.schema
             })
-      )
+      );
 
       const scopeRef = computed(() => ({
         ...options.scope,
-        ...props.scope,
-      }))
+        ...props.scope
+      }));
 
       const optionsRef = computed(() => ({
         ...options,
         components: {
           ...options.components,
-          ...props.components,
-        },
-      }))
+          ...props.components
+        }
+      }));
 
-      provide(SchemaMarkupSymbol, schemaRef)
-      provide(SchemaOptionsSymbol, optionsRef)
-      provide(SchemaExpressionScopeSymbol, scopeRef)
+      provide(SchemaMarkupSymbol, schemaRef);
+      provide(SchemaOptionsSymbol, optionsRef);
+      provide(SchemaExpressionScopeSymbol, scopeRef);
 
       return () => {
-        env.nonameId = 0
+        env.nonameId = 0;
 
         return h(
           Fragment,
           {},
           {
             default: () => {
-              const children = []
+              const children = [];
               if (slots.default) {
                 children.push(
                   h(
-                    'template',
+                    "template",
                     {},
                     {
-                      default: () => slots.default(),
+                      default: () => slots.default()
                     }
                   )
-                )
+                );
               }
               children.push(
                 h(
@@ -187,66 +183,60 @@ export function createSchemaField<
                   {
                     attrs: {
                       ...props,
-                      schema: schemaRef.value,
-                    },
+                      schema: schemaRef.value
+                    }
                   },
                   {}
                 )
-              )
-              return children
-            },
+              );
+              return children;
+            }
           }
-        )
-      }
-    },
-  }
+        );
+      };
+    }
+  };
 
   const MarkupField = {
-    name: 'MarkupField',
+    name: "MarkupField",
     props: {
       type: String,
-      ...markupProps,
+      ...markupProps
     },
     setup(props: ISchemaMarkupFieldProps, { slots }) {
-      const parentRef = inject(SchemaMarkupSymbol, null)
-      if (!parentRef || !parentRef.value) return () => h('template', {}, {})
+      const parentRef = inject(SchemaMarkupSymbol, null);
+      if (!parentRef || !parentRef.value) return () => h("template", {}, {});
 
-      const name = props.name || getRandomName()
+      const name = props.name || getRandomName();
       const appendArraySchema = (schema: ISchema) => {
         if (parentRef.value.items) {
-          return parentRef.value.addProperty(name, schema)
+          return parentRef.value.addProperty(name, schema);
         } else {
-          return parentRef.value.setItems(resolveSchemaProps(props))
+          return parentRef.value.setItems(resolveSchemaProps(props));
         }
-      }
+      };
 
-      const schemaRef = shallowRef(null)
+      const schemaRef = shallowRef(null);
 
       watch(
         parentRef,
         () => {
-          if (
-            parentRef.value.type === 'object' ||
-            parentRef.value.type === 'void'
-          ) {
-            schemaRef.value = parentRef.value.addProperty(
-              name,
-              resolveSchemaProps(props)
-            )
-          } else if (parentRef.value.type === 'array') {
-            const schema = appendArraySchema(resolveSchemaProps(props))
-            schemaRef.value = Array.isArray(schema) ? schema[0] : schema
+          if (parentRef.value.type === "object" || parentRef.value.type === "void") {
+            schemaRef.value = parentRef.value.addProperty(name, resolveSchemaProps(props));
+          } else if (parentRef.value.type === "array") {
+            const schema = appendArraySchema(resolveSchemaProps(props));
+            schemaRef.value = Array.isArray(schema) ? schema[0] : schema;
           }
         },
         { immediate: true }
-      )
-      provide(SchemaMarkupSymbol, schemaRef)
+      );
+      provide(SchemaMarkupSymbol, schemaRef);
 
       return () => {
-        return h('div', { style: 'display: none;' }, slots)
-      }
-    },
-  }
+        return h("div", { style: "display: none;" }, slots);
+      };
+    }
+  };
 
   const SchemaFieldFactory = (type: SchemaTypes, name: string) => {
     return {
@@ -259,25 +249,25 @@ export function createSchemaField<
             {
               attrs: {
                 ...props,
-                type: type,
-              },
+                type: type
+              }
             },
             slots
-          )
-      },
-    }
-  }
+          );
+      }
+    };
+  };
 
   return {
     SchemaField,
     SchemaMarkupField: MarkupField,
-    SchemaStringField: SchemaFieldFactory('string', 'SchemaStringField'),
-    SchemaObjectField: SchemaFieldFactory('object', 'SchemaObjectField'),
-    SchemaArrayField: SchemaFieldFactory('array', 'SchemaArrayField'),
-    SchemaBooleanField: SchemaFieldFactory('boolean', 'SchemaBooleanField'),
-    SchemaDateField: SchemaFieldFactory('date', 'SchemaDateField'),
-    SchemaDateTimeField: SchemaFieldFactory('datetime', 'SchemaDatetimeField'),
-    SchemaVoidField: SchemaFieldFactory('void', 'SchemaVoidField'),
-    SchemaNumberField: SchemaFieldFactory('number', 'SchemaNumberField'),
-  } as unknown as SchemaFieldComponents
+    SchemaStringField: SchemaFieldFactory("string", "SchemaStringField"),
+    SchemaObjectField: SchemaFieldFactory("object", "SchemaObjectField"),
+    SchemaArrayField: SchemaFieldFactory("array", "SchemaArrayField"),
+    SchemaBooleanField: SchemaFieldFactory("boolean", "SchemaBooleanField"),
+    SchemaDateField: SchemaFieldFactory("date", "SchemaDateField"),
+    SchemaDateTimeField: SchemaFieldFactory("datetime", "SchemaDatetimeField"),
+    SchemaVoidField: SchemaFieldFactory("void", "SchemaVoidField"),
+    SchemaNumberField: SchemaFieldFactory("number", "SchemaNumberField")
+  } as unknown as SchemaFieldComponents;
 }

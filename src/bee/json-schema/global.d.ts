@@ -1,6 +1,6 @@
-import * as Types from './types'
+import * as Types from "./types";
 declare global {
   namespace Pageily.Schema {
-    export { Types }
+    export { Types };
   }
 }

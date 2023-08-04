@@ -1,1 +1,1 @@
-export const stylePrefix = 'bee'
+export const stylePrefix = "bee";

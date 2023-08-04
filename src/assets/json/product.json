@@ -1,0 +1,494 @@
+{
+  "version": "md5",
+  "title": "商品列表",
+  "name": "productList",
+  "x-schema": {
+    "type": "object",
+    "properties": {
+      "root": {
+        "type": "void",
+        "x-component": "TreeTable",
+        "x-component-props": {
+          "treeFilter": { "source": { "type": "model", "value": "category" } },
+          "operations": [
+            {
+              "title": "导入Excel",
+              "name": "importExcel"
+            },
+            {
+              "title": "导出Excel",
+              "name": "exportExcel"
+            },
+            {
+              "title": "导出配置",
+              "name": "exportSettings"
+            },
+            {
+              "title": "打印",
+              "name": "print"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "x-reactions": {},
+  "x-model": [
+    {
+      "name": "id",
+      "title": "ID",
+      "type": "integer",
+      "maxLength": 20,
+      "isKey": true,
+      "required": true
+    },
+    {
+      "name": "mainpic",
+      "title": "图片",
+      "type": "string",
+      "maxLength": 2000
+    },
+    {
+      "name": "type",
+      "title": "类型",
+      "type": "integer",
+      "bizType": "enum",
+      "default": {
+        "type": "static",
+        "value": 0
+      },
+      "source": {
+        "type": "static",
+        "value": [
+          { "value": 0, "text": "原料" },
+          { "value": 1, "text": "净菜" },
+          { "value": 2, "text": "成品" },
+          { "value": 3, "text": "包材" }
+        ]
+      },
+      "required": true
+    },
+    {
+      "name": "itemcategory_id",
+      "title": "分类",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "itemcategory"
+      },
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "top_itemcategory_id",
+      "title": "商品顶层分类",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "itemcategory"
+      },
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "name",
+      "title": "商品名称",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "item_code",
+      "title": "商品编码",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "item_code1",
+      "title": "辅助编码",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "barcode",
+      "title": "商品条码",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "barcode1",
+      "title": "辅助条码",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "shorthand_code",
+      "title": "速记码",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "expriry_date",
+      "title": "保质期/天",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "brand_id",
+      "title": "商品品牌",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "brand"
+      },
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "dimension",
+      "title": "产地",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "loss_rate",
+      "title": "损耗率",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "label_id",
+      "title": "商品类别",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "def",
+        "value": "label"
+      },
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "sale_price",
+      "title": "市场价",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "basic_unitgroup",
+      "title": "基本单位组",
+      "type": "integer",
+      "default": {
+        "type": "def",
+        "value": "defaultunitgroup"
+      },
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "unitgroup"
+      },
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "basic_unit",
+      "title": "基本单位",
+      "type": "integer",
+      "default": {
+        "type": "def",
+        "value": "defaultbasicunit"
+      },
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "basicunit"
+      },
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "po_unitgroup",
+      "title": "采购单位组",
+      "type": "integer",
+      "default": {
+        "type": "def",
+        "value": "defaultpounit"
+      },
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "pounit"
+      },
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "po_unit",
+      "title": "采购单位",
+      "type": "integer",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "po_conversion_rate",
+      "title": "换算率",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "stock_unitgroup",
+      "title": "库存单位组",
+      "type": "integer",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "stock_unit",
+      "title": "库存单位",
+      "type": "integer",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "stock_conversion_rate",
+      "title": "换算率",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "delivery_unitgroup",
+      "title": "配送单位组",
+      "type": "integer",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "delivery_unit",
+      "title": "配送单位",
+      "type": "integer",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "delivery_conversion_rate",
+      "title": "换算率",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "po_price",
+      "title": "进货价",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "moq",
+      "title": "起订量",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "reorder",
+      "title": "排序",
+      "type": "number",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "is_sale",
+      "title": "是否可售",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "unit"
+      }
+    },
+    {
+      "name": "is_sorting",
+      "title": "是否支持分拣",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "is_process",
+      "title": "是否加工品",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "is_centralizedpurchase",
+      "title": "是否支持集采",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "is_marketprice",
+      "title": "是否时价",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "remark",
+      "title": "备注",
+      "type": "string",
+      "maxLength": 200
+    },
+    {
+      "name": "length",
+      "title": "长",
+      "type": "number",
+      "maxLength": 200
+    },
+    {
+      "name": "width",
+      "title": "宽",
+      "type": "number",
+      "maxLength": 200
+    },
+    {
+      "name": "height",
+      "title": "高",
+      "type": "number",
+      "maxLength": 200
+    },
+    {
+      "name": "volume",
+      "title": "体积",
+      "type": "number",
+      "maxLength": 200
+    },
+    {
+      "name": "weight",
+      "title": "净重",
+      "type": "number",
+      "maxLength": 200
+    },
+    {
+      "name": "tare",
+      "title": "皮重",
+      "type": "number",
+      "maxLength": 200
+    },
+    {
+      "name": "package_id",
+      "title": "包材",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "conversion_type",
+      "title": "换算方式",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "conversion_value",
+      "title": "换算值",
+      "type": "number",
+      "maxLength": 200
+    },
+    {
+      "name": "parent",
+      "title": "父商品",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "grade_type",
+      "title": "商品分级",
+      "type": "integer",
+      "maxLength": 200
+    },
+    {
+      "name": "is_children",
+      "title": "是否有孩子商品",
+      "type": "integer",
+      "maxLength": 200
+    }
+  ],
+  "x-field-extra": {
+    "mainpic": {
+      "list": {
+        "width": 100,
+        "render": "cellrender",
+        "sortable": "xx"
+      }
+    }
+  },
+  "x-scenes": {
+    "search": {
+      "name": "searchbar",
+      "title": "商品管理搜索",
+      "fields": ["name", "type", "brand_id", "label_id", "brand_id"]
+    },
+    "list": {
+      "name": "list",
+      "title": "商品管理",
+      "fields": ["mainpic", "type", "itemcategory_id", "name", "item_code", "remark", "calculate"]
+    },
+    "edit": {
+      "name": "edit",
+      "title": "商品编辑",
+      "layout": {
+        "type": "void",
+        "x-component": "Tab",
+        "items": [
+          {
+            "type": "void",
+            "title": "基本信息",
+            "x-component": "Tab.TabPane",
+            "items": [
+              {
+                "type": "void",
+                "title": "基本信息",
+                "x-component": "Box",
+                "fields": ["mainpic", "type"]
+              },
+              {
+                "type": "void",
+                "title": "计量单位",
+                "x-component": "Box",
+                "fields": ["basic_unit", "po_unit", "po_conversion_rate", "itemunitrelation"]
+              }
+            ]
+          },
+          {
+            "type": "void",
+            "title": "图片信息",
+            "x-component": "Tab.TabPane",
+            "items": [
+              {
+                "type": "void",
+                "title": "图片信息",
+                "x-component": "Box",
+                "fields": ["itempic"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "view": {
+      "name": "view",
+      "title": "商品查看"
+    }
+  }
+}

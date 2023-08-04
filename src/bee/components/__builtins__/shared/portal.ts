@@ -1,43 +1,43 @@
-import { defineComponent, onBeforeUnmount } from 'vue'
-import { h, Fragment } from '../../../vue'
+import { defineComponent, onBeforeUnmount } from "vue";
+import { h, Fragment } from "../../../vue";
 export interface IPortalProps {
-  id?: string | symbol
+  id?: string | symbol;
 }
 
-const PortalMap = new Map<string | symbol, any>()
+const PortalMap = new Map<string | symbol, any>();
 
 export const createPortalProvider = (id: string | symbol) => {
   const Portal = defineComponent({
-    name: 'PortalProvider',
+    name: "PortalProvider",
     props: {
       id: {
         type: [String, Symbol],
-        default: id,
-      },
+        default: id
+      }
     },
 
     setup(props) {
       onBeforeUnmount(() => {
-        const { id } = props
+        const { id } = props;
         if (id && PortalMap.has(id)) {
-          PortalMap.delete(id)
+          PortalMap.delete(id);
         }
-      })
+      });
     },
 
     render() {
-      const { id } = this
+      const { id } = this;
       if (id && !PortalMap.has(id)) {
-        PortalMap.set(id, this)
+        PortalMap.set(id, this);
       }
 
-      return h(Fragment, {}, this.$slots)
-    },
-  })
+      return h(Fragment, {}, this.$slots);
+    }
+  });
 
-  return Portal
-}
+  return Portal;
+};
 
 export function getPortalContext(id: string | symbol) {
-  return PortalMap.get(id)
+  return PortalMap.get(id);
 }

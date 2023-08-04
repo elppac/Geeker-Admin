@@ -19,8 +19,8 @@ export const getFieldProps = () => ({
   readPretty: { type: Boolean, default: undefined },
   dataSource: {},
   validator: {},
-  reactions: [Array, Function],
-})
+  reactions: [Array, Function]
+});
 
 export const getVoidFieldProps = () => ({
   name: {},
@@ -37,5 +37,5 @@ export const getVoidFieldProps = () => ({
   disabled: { type: Boolean, default: undefined },
   readOnly: { type: Boolean, default: undefined },
   readPretty: { type: Boolean, default: undefined },
-  reactions: [Array, Function],
-})
+  reactions: [Array, Function]
+});

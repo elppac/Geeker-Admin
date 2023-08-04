@@ -1,30 +1,22 @@
-import {
-  ref,
-  defineComponent,
-  provide,
-  h,
-} from 'vue'
-import { connect, mapProps } from '../../vue'
+import { ref, defineComponent, provide, h } from "vue";
+import { connect, mapProps } from "../../vue";
 
-import { usePageLayout, PageLayoutShallowContext } from '../page-layout'
-import {
-  composeExport,
-  stylePrefix,
-} from '../__builtins__'
-import { useGridColumn } from '../page-grid'
+import { usePageLayout, PageLayoutShallowContext } from "../page-layout";
+import { composeExport, stylePrefix } from "../__builtins__";
+import { useGridColumn } from "../page-grid";
 
 export type PageGridItemProps = {
-  className?: string
-  wrapperWidth?: number
-  wrapperStyle?: Record<string, any>
-  fullness?: boolean
-  asterisk?: boolean
-  gridSpan?: number | string
-  bordered?: boolean
-}
+  className?: string;
+  wrapperWidth?: number;
+  wrapperStyle?: Record<string, any>;
+  fullness?: boolean;
+  asterisk?: boolean;
+  gridSpan?: number | string;
+  bordered?: boolean;
+};
 
 export const PageGridBaseItem = defineComponent({
-  name: 'PageItem',
+  name: "PageItem",
   props: {
     className: {},
     wrapperWidth: {},
@@ -33,35 +25,35 @@ export const PageGridBaseItem = defineComponent({
     asterisk: {},
     gridSpan: {},
     bordered: { default: true },
-    inset: { default: false },
+    inset: { default: false }
   },
   setup(props, { slots }) {
-    const active = ref(false)
-    const deepLayoutRef = usePageLayout()
-    const prefixCls = `${stylePrefix}-page-grid-item`
-    provide(PageLayoutShallowContext, ref({}))
+    const active = ref(false);
+    const deepLayoutRef = usePageLayout();
+    const prefixCls = `${stylePrefix}-page-grid-item`;
+    provide(PageLayoutShallowContext, ref({}));
     return () => {
-      const gridColumn = useGridColumn(props.gridSpan as string)
-      const gridStyles: Record<string, any> = {}
+      const gridColumn = useGridColumn(props.gridSpan as string);
+      const gridStyles: Record<string, any> = {};
 
       if (gridColumn) {
-        gridStyles.gridColumn = gridColumn
+        gridStyles.gridColumn = gridColumn;
       }
-      const deepLayout = deepLayoutRef.value
+      const deepLayout = deepLayoutRef.value;
       const {
-        layout = deepLayout.layout ?? 'horizontal',
+        layout = deepLayout.layout ?? "horizontal",
         wrapperWrap = deepLayout.wrapperWrap,
         fullness = deepLayout.fullness,
         size = deepLayout.size,
         bordered = deepLayout.bordered,
-        inset = deepLayout.inset,
-      } = props as any
-      const formatChildren = slots.default?.()
+        inset = deepLayout.inset
+      } = props as any;
+      const formatChildren = slots.default?.();
       return h(
-        'div',
+        "div",
         {
           style: {
-            ...gridStyles,
+            ...gridStyles
           },
           class: {
             [`${prefixCls}`]: true,
@@ -72,37 +64,34 @@ export const PageGridBaseItem = defineComponent({
             [`${prefixCls}-active`]: active.value,
             [`${prefixCls}-inset-active`]: !!inset && active.value,
             [`${prefixCls}-control-wrap`]: !!wrapperWrap,
-            [`${prefixCls}-bordered-none`]:
-              bordered === false || !!inset ,
-            [`${props.className}`]: !!props.className,
+            [`${prefixCls}-bordered-none`]: bordered === false || !!inset,
+            [`${props.className}`]: !!props.className
           }
         },
         {
-          default: () => [ formatChildren],
+          default: () => [formatChildren]
         }
-      )
-    }
-  },
-})
+      );
+    };
+  }
+});
 
 const Item = connect(
   PageGridBaseItem,
-  mapProps(
-    (props, field) => {
-      if (!field) return props
-      let asterisk = false
-      if ('asterisk' in props) {
-        asterisk = props.asterisk
-      }
-      return {
-        asterisk,
-      }
+  mapProps((props, field) => {
+    if (!field) return props;
+    let asterisk = false;
+    if ("asterisk" in props) {
+      asterisk = props.asterisk;
     }
-  )
-)
+    return {
+      asterisk
+    };
+  })
+);
 
 export const PageGridItem = composeExport(Item, {
-  BaseItem: PageGridBaseItem,
-})
+  BaseItem: PageGridBaseItem
+});
 
-export default PageGridItem
+export default PageGridItem;

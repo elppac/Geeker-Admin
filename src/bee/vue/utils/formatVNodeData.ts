@@ -1,24 +1,22 @@
-import { each } from '@formily/shared'
+import { each } from "@formily/shared";
 
-type VNodeData = Record<string, any>
+type VNodeData = Record<string, any>;
 
 export const formatVue3VNodeData = (data: VNodeData) => {
-  const newData = {}
+  const newData = {};
   each(data, (value, key) => {
-    if (key === 'on' || key === 'nativeOn') {
+    if (key === "on" || key === "nativeOn") {
       if (value) {
         each(value, (func, name) => {
-          const eventName = `on${
-            key === 'on' ? name[0].toUpperCase() : name[0]
-          }${name.slice(1)}`
-          newData[eventName] = func
-        })
+          const eventName = `on${key === "on" ? name[0].toUpperCase() : name[0]}${name.slice(1)}`;
+          newData[eventName] = func;
+        });
       }
-    } else if (key === 'attrs' || key === 'props' || key === 'domProps') {
-      Object.assign(newData, value)
+    } else if (key === "attrs" || key === "props" || key === "domProps") {
+      Object.assign(newData, value);
     } else {
-      newData[key] = value
+      newData[key] = value;
     }
-  })
-  return newData
-}
+  });
+  return newData;
+};

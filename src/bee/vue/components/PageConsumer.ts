@@ -1,32 +1,31 @@
-import { defineComponent } from 'vue-demi'
-import { observer } from '@formily/reactive-vue'
-import { usePage } from '../hooks'
-import h from '../shared/h'
+import { defineComponent } from "vue";
+import { observer } from "@formily/reactive-vue";
+import { usePage } from "../hooks";
+import h from "../shared/h";
 
 export default observer(
   defineComponent({
-    name: 'PageConsumer',
+    name: "PageConsumer",
     inheritAttrs: false,
     setup(props, { slots }) {
-      const pageRef = usePage()
+      const pageRef = usePage();
       return () => {
         // just like <Fragment>
         return h(
-          'div',
-          { style: { display: 'contents' } },
+          "div",
+          { style: { display: "contents" } },
           {
             default: () =>
               slots.default?.({
-                page: pageRef.value,
-              }),
+                page: pageRef.value
+              })
           }
-        )
-      }
-    },
+        );
+      };
+    }
   }),
   {
     // make sure observables updated <cannot be tracked by tests>
-    scheduler: /* istanbul ignore next */ (update) =>
-      Promise.resolve().then(update),
+    scheduler: /* istanbul ignore next */ update => Promise.resolve().then(update)
   }
-)
+);

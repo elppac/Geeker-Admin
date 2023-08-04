@@ -1,0 +1,28 @@
+[
+  {
+    "title": "商品",
+    "items": [
+      {
+        "title": "商品管理",
+        "items": [
+          {
+            "title": "云库分类",
+            "name": "cloudlibraryitemcategory",
+            "version": "md5"
+          },
+          {
+            "title": "云库商品",
+            "name": "cloudlibraryitem",
+            "version": "md5"
+          },
+          {
+            "title": "商品明细",
+            "name": "items",
+            "path": "product/items",
+            "version": "md5"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -28,7 +28,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       }
     },
     define: {
-      __APP_INFO__: JSON.stringify(__APP_INFO__)
+      __APP_INFO__: JSON.stringify(__APP_INFO__),
+      __ENGINE__: `"${env.VITE_ENGINE}"`
     },
     css: {
       preprocessorOptions: {

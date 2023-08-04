@@ -1,13 +1,10 @@
-import { isFn, isValid } from '@formily/shared';
-import { LifeCycle, Page } from '../models';
-import { type AnyFunction } from '../types';
-import { isPage } from './checkers';
-import { GlobalState } from './constants';
+import { isFn, isValid } from "@formily/shared";
+import { LifeCycle, Page } from "../models";
+import { type AnyFunction } from "../types";
+import { isPage } from "./checkers";
+import { GlobalState } from "./constants";
 
-export const createEffectHook = <F extends (payload: any, ...ctxs: any[]) => AnyFunction>(
-  type: string,
-  callback?: F
-) => {
+export const createEffectHook = <F extends (payload: any, ...ctxs: any[]) => AnyFunction>(type: string, callback?: F) => {
   return (...args: Parameters<ReturnType<F>>) => {
     if (GlobalState.effectStart) {
       GlobalState.lifecycles.push(
@@ -18,7 +15,7 @@ export const createEffectHook = <F extends (payload: any, ...ctxs: any[]) => Any
         })
       );
     } else {
-      throw new Error('Effect hooks cannot be used in asynchronous function body');
+      throw new Error("Effect hooks cannot be used in asynchronous function body");
     }
   };
 };
@@ -31,12 +28,12 @@ export const createEffectContext = <T = any>(defaultValue?: T) => {
         index = GlobalState.context.length;
         GlobalState.context[index] = isValid(value) ? value : defaultValue;
       } else {
-        throw new Error('Provide method cannot be used in asynchronous function body');
+        throw new Error("Provide method cannot be used in asynchronous function body");
       }
     },
     consume(): T {
       if (!GlobalState.effectStart) {
-        throw new Error('Consume method cannot be used in asynchronous function body');
+        throw new Error("Consume method cannot be used in asynchronous function body");
       }
       return GlobalState.context[index];
     }
@@ -47,10 +44,7 @@ const PageEffectContext = createEffectContext<Page>();
 
 export const useEffectPage = PageEffectContext.consume;
 
-export const runEffects = <Context>(
-  context?: Context,
-  ...args: ((context: Context) => void)[]
-): LifeCycle[] => {
+export const runEffects = <Context>(context?: Context, ...args: ((context: Context) => void)[]): LifeCycle[] => {
   GlobalState.lifecycles = [];
   GlobalState.context = [];
   GlobalState.effectStart = true;
@@ -58,7 +52,7 @@ export const runEffects = <Context>(
   if (isPage(context)) {
     PageEffectContext.provide(context);
   }
-  args.forEach((effects) => {
+  args.forEach(effects => {
     if (isFn(effects)) {
       effects(context);
     }

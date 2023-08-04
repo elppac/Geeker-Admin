@@ -13,8 +13,8 @@ export const ReservedProperties = {
   componentType: true,
   componentProps: true,
   decoratorType: true,
-  decoratorProps: true,
-}
+  decoratorProps: true
+};
 
 export const ReadOnlyProperties = {
   address: true,
@@ -26,11 +26,11 @@ export const ReadOnlyProperties = {
   errors: true,
   successes: true,
   warnings: true,
-  validateStatus: true,
-}
+  validateStatus: true
+};
 
-const SELF_DISPLAY = 'selfDisplay'
-const SELF_PATTERN = 'selfPattern'
+const SELF_DISPLAY = "selfDisplay";
+const SELF_PATTERN = "selfPattern";
 
 export const MutuallyExclusiveProperties = {
   pattern: SELF_PATTERN,
@@ -40,17 +40,17 @@ export const MutuallyExclusiveProperties = {
   disabled: SELF_PATTERN,
   display: SELF_DISPLAY,
   hidden: SELF_DISPLAY,
-  visible: SELF_DISPLAY,
-}
+  visible: SELF_DISPLAY
+};
 
-export const RESPONSE_REQUEST_DURATION = 100
+export const RESPONSE_REQUEST_DURATION = 100;
 
 export const GlobalState = {
   lifecycles: [],
   context: [],
   effectStart: false,
   effectEnd: false,
-  initializing: false,
-}
+  initializing: false
+};
 
-export const NumberIndexReg = /^\.(\d+)/
+export const NumberIndexReg = /^\.(\d+)/;

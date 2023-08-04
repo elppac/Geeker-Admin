@@ -1,11 +1,7 @@
-import { FormPath } from '@formily/shared'
-import { Page } from '../models'
-import { type IPageProps } from '../types'
-import {
-  createEffectHook,
-  createEffectContext,
-  useEffectPage,
-} from './effective'
+import { FormPath } from "@formily/shared";
+import { Page } from "../models";
+import { type IPageProps } from "../types";
+import { createEffectHook, createEffectContext, useEffectPage } from "./effective";
 import {
   isArrayField,
   isArrayFieldState,
@@ -21,12 +17,12 @@ import {
   isObjectFieldState,
   isQuery,
   isVoidField,
-  isVoidFieldState,
-} from './checkers'
+  isVoidFieldState
+} from "./checkers";
 
 const createPage = <T extends object = any>(options?: IPageProps<T>) => {
-  return new Page(options)
-}
+  return new Page(options);
+};
 
 export {
   FormPath,
@@ -48,5 +44,5 @@ export {
   isVoidFieldState,
   createEffectHook,
   createEffectContext,
-  useEffectPage,
-}
+  useEffectPage
+};

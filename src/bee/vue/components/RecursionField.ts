@@ -1,21 +1,21 @@
-import { inject, provide, watch, shallowRef, computed, markRaw } from 'vue-demi';
-import { isFn, isValid } from '@formily/shared';
-import { Schema } from '../../json-schema';
-import { SchemaSymbol, SchemaOptionsSymbol, SchemaExpressionScopeSymbol } from '../shared';
-import { useField } from '../hooks';
-import Field from './Field';
-import VoidField from './VoidField';
-import { h } from '../shared/h';
+import { inject, provide, watch, shallowRef, computed, markRaw } from "vue";
+import { isFn, isValid } from "@formily/shared";
+import { Schema } from "../../json-schema";
+import { SchemaSymbol, SchemaOptionsSymbol, SchemaExpressionScopeSymbol } from "../shared";
+import { useField } from "../hooks";
+import Field from "./Field";
+import VoidField from "./VoidField";
+import { h } from "../shared/h";
 
-import type { IRecursionFieldProps, DefineComponent } from '../types';
-import type { GeneralField } from '../../core/types';
+import type { IRecursionFieldProps, DefineComponent } from "../types";
+import type { GeneralField } from "../../core/types";
 
 const resolveEmptySlot = (slots: Record<any, (...args: any[]) => any[]>) => {
-  return Object.keys(slots).length ? h('div', { style: 'display:contents;' }, slots) : undefined;
+  return Object.keys(slots).length ? h("div", { style: "display:contents;" }, slots) : undefined;
 };
 
 const RecursionField = {
-  name: 'RecursionField',
+  name: "RecursionField",
   inheritAttrs: false,
   props: {
     schema: {
@@ -38,8 +38,7 @@ const RecursionField = {
     const parentRef = useField();
     const optionsRef = inject(SchemaOptionsSymbol);
     const scopeRef = inject(SchemaExpressionScopeSymbol);
-    const createSchema = (schemaProp: IRecursionFieldProps['schema']) =>
-      markRaw(new Schema(schemaProp));
+    const createSchema = (schemaProp: IRecursionFieldProps["schema"]) => markRaw(new Schema(schemaProp));
     const fieldSchemaRef = computed(() => createSchema(props.schema));
 
     const getPropsFromSchema = (schema: Schema) =>
@@ -95,7 +94,7 @@ const RecursionField = {
               return null;
             }
           }
-          setRender(schema['x-slot'] ?? 'default', (field?: GeneralField) =>
+          setRender(schema["x-slot"] ?? "default", (field?: GeneralField) =>
             h(
               RecursionField,
               {
@@ -105,25 +104,23 @@ const RecursionField = {
                   name,
                   basePath: field?.address || basePath
                 },
-                slot: schema['x-slot']
+                slot: schema["x-slot"]
               },
               {}
             )
           );
         });
         const slots = {};
-        Object.keys(renderMap).forEach((key) => {
+        Object.keys(renderMap).forEach(key => {
           const renderFns = renderMap[key];
-          slots[key] = scoped
-            ? ({ field }) => renderFns.map((fn) => fn(field))
-            : () => renderFns.map((fn) => fn());
+          slots[key] = scoped ? ({ field }) => renderFns.map(fn => fn(field)) : () => renderFns.map(fn => fn());
         });
         return slots;
       };
 
       const render = () => {
         if (!isValid(props.name)) return resolveEmptySlot(generateSlotsByProperties());
-        if (fieldSchemaRef.value.type === 'void') {
+        if (fieldSchemaRef.value.type === "void") {
           if (props.onlyRenderProperties) return resolveEmptySlot(generateSlotsByProperties());
           const slots = generateSlotsByProperties(true);
           return h(
