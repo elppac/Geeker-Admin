@@ -13,19 +13,34 @@
           "operations": [
             {
               "title": "导入Excel",
-              "name": "importExcel"
+              "name": "import",
+              "location": "multiple"
             },
             {
               "title": "导出Excel",
-              "name": "exportExcel"
+              "name": "export",
+              "location": "multiple"
             },
             {
-              "title": "导出配置",
-              "name": "exportSettings"
+              "title": "批量删除",
+              "name": "delete",
+              "location": "multiple",
+              "selected": true
+            },
+            {
+              "title": "分享",
+              "name": "share",
+              "location": "single"
             },
             {
               "title": "打印",
-              "name": "print"
+              "name": "print",
+              "location": "single"
+            },
+            {
+              "title": "分享",
+              "name": "share",
+              "location": "record"
             }
           ]
         }
@@ -150,35 +165,45 @@
       "layout": {
         "type": "void",
         "x-component": "Tab",
-        "items": [
+        "children": [
           {
             "type": "void",
-            "title": "基本信息",
             "x-component": "Tab.TabPane",
-            "items": [
+            "x-component-props": {
+              "label": "基本信息"
+            },
+            "children": [
               {
                 "type": "void",
-                "title": "基本信息",
-                "x-component": "Box",
+                "x-component": "GridBox",
+                "x-component-props": {
+                  "label": "基本信息"
+                },
                 "fields": ["username", "gender", "idCard"]
               },
               {
                 "type": "void",
-                "title": "更多信息",
-                "x-component": "Box",
-                "fields": ["email"]
+                "x-component": "GridBox",
+                "x-component-props": {
+                  "label": "更多信息"
+                },
+                "fields": ["email", "address"]
               }
             ]
           },
           {
             "type": "void",
-            "title": "图片信息",
             "x-component": "Tab.TabPane",
-            "items": [
+            "x-component-props": {
+              "label": "图片信息"
+            },
+            "children": [
               {
                 "type": "void",
-                "title": "图片信息",
-                "x-component": "Box",
+                "x-component": "GridBox",
+                "x-component-props": {
+                  "label": "图片信息"
+                },
                 "fields": ["avatar"]
               }
             ]

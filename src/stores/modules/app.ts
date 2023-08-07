@@ -30,6 +30,9 @@ const getListSetting = (state: AppState) => {
 const getSearchbarSetting = (state: AppState) => {
   return _.get(getPageSetting(state), `[x-scenes].search`);
 };
+const getFormSetting = (state: AppState) => {
+  return _.get(getPageSetting(state), `[x-scenes].edit`);
+};
 /**
  * 元模型
  * @param state
@@ -94,6 +97,71 @@ export const useAppStore = defineStore({
         });
 
         return { ...setting, items };
+      }
+      return null;
+    },
+    scenesFormConfig: state => {
+      const setting = getFormSetting(state);
+      const model = getModel(state);
+      const extra = getFieldExtra(state);
+
+      const getComponent = (schema: any) => {
+        let formSchema: any = { "x-component": "Input" };
+        switch (schema.type) {
+          case "number":
+            formSchema["x-component"] = "InputNumber";
+            break;
+          default:
+        }
+        if (schema.bizType === "enum") {
+          switch (schema.source.type) {
+            case "static":
+              formSchema["x-component"] = "Select";
+              formSchema["x-reactions"] = ["{{useAsyncDataSource()}}"];
+              break;
+            default:
+          }
+        } else if (schema.bizType === "image") {
+          formSchema["x-component"] = "Upload";
+        }
+        return formSchema;
+      };
+
+      const recursion: any = (data: any) => {
+        const { children, fields, ...rest } = data;
+        const schema: any = rest;
+        if (Array.isArray(children)) {
+          schema.properties = {};
+          children
+            .map(i => recursion(i))
+            .forEach(i => {
+              schema.properties[i.name ?? _.uniqueId(_.camelCase(i["x-component"] || "unknown"))] = i;
+            });
+        }
+        if (Array.isArray(fields)) {
+          if (!schema.properties) {
+            schema.properties = {};
+          }
+          model.forEach((i: any) => {
+            const { name, source, ...rest } = i;
+            if (fields.includes(name)) {
+              schema.properties[name] = {
+                name,
+                ...rest,
+                ...(extra[name]?.edit ?? {}),
+                ...getComponent(i),
+                "x-component-props": { source },
+                "x-decorator": "FormItem"
+              };
+            }
+          });
+        }
+        return schema;
+      };
+
+      if (setting) {
+        const schema = recursion(setting.layout);
+        return { ...setting, schema };
       }
       return null;
     }

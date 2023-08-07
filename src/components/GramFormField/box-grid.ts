@@ -1,40 +1,42 @@
+/* eslint-disable vue/one-component-per-file */
 import {
   defineComponent,
   provide,
   onMounted,
-  type InjectionKey,
-  type Ref,
+  InjectionKey,
+  Ref,
   computed,
   watchEffect,
   inject,
-  type PropType,
+  PropType,
   getCurrentInstance,
-  type ComponentInternalInstance
+  ComponentInternalInstance
 } from "vue";
-import { h } from "../../vue";
+import { h } from "@formily/vue";
 import { observer } from "@formily/reactive-vue";
 import { markRaw } from "@formily/reactive";
-import { Grid, type IGridOptions } from "@formily/grid";
-import { stylePrefix, composeExport } from "../__builtins__";
-import { usePageLayout } from "../page-layout";
+import { Grid, IGridOptions } from "@formily/grid";
+import { useFormLayout } from "@formily/element-plus";
+import { ElDivider } from "element-plus";
 
-export interface IPageGridProps extends IGridOptions {
+export interface IGramFormGridBoxProps extends IGridOptions {
   grid?: Grid<HTMLElement>;
   prefixCls?: string;
   className?: string;
 }
+const stylePrefix = "formily-element-plus";
 
-const PageGridSymbol: InjectionKey<Ref<Grid<HTMLElement>>> = Symbol("PageGridContext");
+const GramFormGridBoxSymbol: InjectionKey<Ref<Grid<HTMLElement>>> = Symbol("GramFormGridBoxContext");
 
 interface GridColumnProps {
   gridSpan: number;
 }
 
-export const createPageGrid = (props: IPageGridProps): Grid<HTMLElement> => {
+export const createGramFormGridBox = (props: IGramFormGridBoxProps): Grid<HTMLElement> => {
   return markRaw(new Grid(props));
 };
 
-export const usePageGrid = (): Ref<Grid<HTMLElement>> => inject(PageGridSymbol);
+export const useGramFormGridBox = (): Ref<Grid<HTMLElement>> => inject(GramFormGridBoxSymbol);
 
 /**
  * @deprecated
@@ -48,10 +50,13 @@ const useRefs = (): Record<string, unknown> => {
   return vm?.refs || {};
 };
 
-const PageGridInner = observer(
+const GramFormGridBoxInner = observer(
   defineComponent({
-    name: "BeePageGrid",
+    name: "GramFormGridBox",
     props: {
+      label: {
+        type: String
+      },
       columnGap: {
         type: Number
       },
@@ -59,16 +64,19 @@ const PageGridInner = observer(
         type: Number
       },
       minColumns: {
-        type: [Number, Array]
+        type: [Number, Array],
+        default: 1
       },
       minWidth: {
         type: [Number, Array]
       },
       maxColumns: {
-        type: [Number, Array]
+        type: [Number, Array],
+        default: 4
       },
       maxWidth: {
-        type: [Number, Array]
+        type: [Number, Array],
+        default: 240
       },
       breakpoints: {
         type: Array
@@ -91,25 +99,26 @@ const PageGridInner = observer(
         type: Object as PropType<Grid<HTMLElement>>
       }
     },
-    setup(props: any, { slots }) {
-      const layout = usePageLayout();
+    setup(props: any, { slots, attrs }) {
+      const layout = useFormLayout();
+
       const gridInstance = computed(() => {
-        const newProps: IPageGridProps = {};
+        const newProps: IGramFormGridBoxProps = {};
         Object.keys(props).forEach(key => {
           if (typeof props[key] !== "undefined") {
             newProps[key] = props[key];
           }
         });
         const options = {
-          columnGap: layout.value?.gridColumnGap ?? 8,
-          rowGap: layout.value?.gridRowGap ?? 4,
+          columnGap: layout.value?.gridColumnGap ?? 24,
+          rowGap: layout.value?.gridRowGap ?? 16,
           ...newProps
         };
         return markRaw(options?.grid ? options.grid : new Grid(options));
       });
-      const prefixCls = `${stylePrefix}-page-grid`;
+      const prefixCls = `${stylePrefix}-form-grid`;
 
-      provide(PageGridSymbol, gridInstance);
+      provide(GramFormGridBoxSymbol, gridInstance);
 
       onMounted(() => {
         const refs = useRefs();
@@ -120,28 +129,30 @@ const PageGridInner = observer(
           });
         });
       });
-
       return () => {
-        return h(
-          "div",
-          {
-            class: `${prefixCls}`,
-            style: {
-              gridTemplateColumns: gridInstance.value.templateColumns,
-              gap: gridInstance.value.gap
+        return [
+          h(ElDivider, { contentPosition: "left", ...attrs }, { default: () => props.label || "BOX" }),
+          h(
+            "div",
+            {
+              class: `${prefixCls}`,
+              style: {
+                gridTemplateColumns: gridInstance.value.templateColumns,
+                gap: gridInstance.value.gap
+              },
+              ref: "root"
             },
-            ref: "root"
-          },
-          slots
-        );
+            slots
+          )
+        ];
       };
     }
   })
 ) as any;
 
-const PageGridColumn = observer(
+const GramFormGridBoxColumn = observer(
   defineComponent({
-    name: "BeePageGridColumn",
+    name: "GramFormGridBoxColumn",
     props: {
       gridSpan: {
         type: Number,
@@ -162,10 +173,10 @@ const PageGridColumn = observer(
   })
 );
 
-export const PageGrid = composeExport(PageGridInner, {
-  GridColumn: PageGridColumn,
-  usePageGrid,
-  createPageGrid
+export const GramFormGridBox = Object.assign(GramFormGridBoxInner, {
+  GridColumn: GramFormGridBoxColumn,
+  useGramFormGridBox,
+  createGramFormGridBox
 });
 
-export default PageGrid;
+export default GramFormGridBox;

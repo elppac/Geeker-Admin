@@ -20,11 +20,11 @@
       </div>
       <div v-if="toolButton" class="header-button-ri">
         <slot name="toolButton">
-          <el-button :icon="Refresh" circle @click="getTableList" />
           <el-button v-if="columns.length" :icon="Printer" circle @click="print" />
-          <el-button v-if="columns.length" :icon="Operation" circle @click="openColSetting" />
-          <el-button v-if="searchColumns.length" :icon="Search" circle @click="isShowSearch = !isShowSearch" />
         </slot>
+        <el-button :icon="Refresh" circle @click="getTableList" />
+        <el-button v-if="columns.length" :icon="Operation" circle @click="openColSetting" />
+        <el-button v-if="searchColumns.length" :icon="Search" circle @click="isShowSearch = !isShowSearch" />
       </div>
     </div>
     <!-- 表格主体 -->
@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts" name="ProTable">
-import * as _ from "lodash-es";
+// import * as _ from "lodash-es";
 import { ref, watch, computed, provide, onMounted } from "vue";
 import { ElTable } from "element-plus";
 import { useTable } from "@/hooks/useTable";
@@ -101,7 +101,7 @@ import Pagination from "./components/Pagination.vue";
 import ColSetting from "./components/ColSetting.vue";
 import TableColumn from "./components/TableColumn.vue";
 import printJS from "print-js";
-import { usePageStore } from "@/stores/modules/page";
+import { useEnum } from "@/hooks/useEnum";
 
 export interface ProTableProps {
   searchbarColumns?: any[];
@@ -119,26 +119,6 @@ export interface ProTableProps {
   rowKey?: string; // 行数据的 Key，用来优化 Table 的渲染，当表格数据多选时，所指定的 id ==> 非必传（默认为 id）
   searchCol?: number | Record<BreakPoint, number>; // 表格搜索项 每列占比配置 ==> 非必传 { xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }
 }
-
-const useEnum = (
-  callback: (data: any[]) => void,
-  params: {
-    uniqueKey: string;
-    source: {
-      type: string;
-      value: any;
-    };
-  }
-) => {
-  const pageStore = usePageStore();
-  const data = computed(() => {
-    return _.get(pageStore.enum, `${params.uniqueKey}.data`) ?? undefined;
-  });
-  watch(data, () => {
-    callback(data?.value);
-  });
-  pageStore.putEnum(params.uniqueKey, params.source);
-};
 
 // 接受父组件参数，配置默认值
 const props = withDefaults(defineProps<ProTableProps>(), {
@@ -185,7 +165,6 @@ const setEnumMap = async (col: ColumnProps) => {
   if (col.bizType === "enum") {
     useEnum(
       data => {
-        console.log(col.prop!, data);
         enumMap.value.set(col.prop!, data);
       },
       {

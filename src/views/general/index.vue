@@ -1,9 +1,11 @@
 <template>
-  <div v-if="pageSchema">
-    <PageProvider :page="page">
-      <SchemaField :schema="pageSchema" />
-    </PageProvider>
-  </div>
+  <Auth>
+    <div v-if="pageSchema">
+      <PageProvider :page="page">
+        <SchemaField :schema="pageSchema" />
+      </PageProvider>
+    </div>
+  </Auth>
 </template>
 
 <script setup lang="ts" name="general">
@@ -13,6 +15,7 @@ import { PageProvider, createPage, createSchemaField } from "@/bee/vue";
 import TreeTable from "@/components/TreeTable/index.vue";
 import { useAppStore } from "@/stores/modules/app";
 import { usePageStore } from "@/stores/modules/page";
+import Auth from "@/components/Auth/index.vue";
 
 const route = useRoute();
 const pageName = route.name as string;

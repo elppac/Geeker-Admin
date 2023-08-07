@@ -34,3 +34,8 @@ export const getAuthButtonListApi = () => {
 export const logoutApi = () => {
   return http.post(PORT1 + `/logout`);
 };
+
+// 获取操作权限
+export const getPermission = () => {
+  return http.get(PORT1 + `/auth/permission`, {});
+};

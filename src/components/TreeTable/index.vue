@@ -21,17 +21,44 @@
         :search-col="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3 }"
       >
         <!-- 表格 header 按钮 -->
-        <template #tableHeader>
-          <!-- <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')"> 新增用户 </el-button> -->
+        <template #tableHeader="scope">
+          <div class="table-box-operations">
+            <el-button v-if="Permissions.includes('add')" type="primary" :icon="CirclePlus" @click="openForm('新增')">
+              新增用户
+            </el-button>
+            <Operation location="multiple" :data="scope" :permissions="Permissions" />
+          </div>
+        </template>
+        <template #toolButton>
+          <Operation location="single" :button="{ circle: true }" :permissions="Permissions" />
         </template>
         <!-- 表格操作 -->
-        <!-- <template #operation="scope">
-          <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)"> 查看 </el-button>
-          <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)"> 编辑 </el-button>
-          <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)"> 删除 </el-button>
-        </template> -->
+        <template #operation="scope">
+          <el-button
+            v-if="Permissions.includes('view')"
+            type="primary"
+            link
+            :icon="View"
+            @click="openForm('查看', scope.row, true)"
+          >
+            查看
+          </el-button>
+          <el-button
+            v-if="Permissions.includes('update')"
+            type="primary"
+            link
+            :icon="EditPen"
+            @click="openForm('编辑', scope.row)"
+          >
+            编辑
+          </el-button>
+          <el-button v-if="Permissions.includes('delete')" type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">
+            删除
+          </el-button>
+          <Operation location="record" :button="{ link: true, type: 'primary' }" :data="scope.row" :permissions="Permissions" />
+        </template>
       </ProTable>
-      <!-- <UserDrawer ref="drawerRef" /> -->
+      <UserDrawer ref="drawerRef" />
       <ImportExcel ref="dialogRef" />
     </div>
   </div>
@@ -40,27 +67,59 @@
 <script setup lang="tsx" name="TreeTable">
 import * as _ from "lodash-es";
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { genderType } from "@/utils/serviceDict";
-// import { useHandleData } from "@/hooks/useHandleData";
+import { useHandleData } from "@/hooks/useHandleData";
+import { FormDrawer, FormLayout, FormItem, Input, FormTab, Select, Upload } from "@formily/element-plus";
+import { ElButton, ElTooltip } from "element-plus";
+import { createSchemaField } from "@formily/vue";
 import { ElMessage } from "element-plus";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-// import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
-// import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
+import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
+import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
-import { getUserTreeList } from "@/api/modules/user";
+import { deleteUser, getUserTreeList } from "@/api/modules/user";
 import { useAppStore } from "@/stores/modules/app";
 import { usePageStore } from "@/stores/modules/page";
+import { User } from "@/api/interface";
+import { GramFormGridBox } from "@/components/GramFormField";
+import { useEnum } from "@/hooks/useEnum";
+import { usePermissions } from "@/hooks/usePermission";
 
 const appStore = useAppStore();
 const pageStore = usePageStore();
+const { Permissions } = usePermissions();
 const props = defineProps<{
   treeFilter: any;
   operations: any[];
 }>();
-
+console.log("appStore.pageSchema?.operations", props.operations);
 const TREE_FILTER_UNIQUE = "treeFilter";
+
+const OperationButtonOptions: {
+  [key: string]: {
+    icon?: any;
+    type?: string;
+    selected?: boolean;
+  };
+} = {
+  export: {
+    icon: <i class="iconfont icon-export" />
+  },
+  import: {
+    icon: <i class="iconfont icon-import" />
+  },
+  delete: {
+    icon: <i class="iconfont icon-rest" />,
+    type: "danger"
+  },
+  share: {
+    icon: <i class="iconfont icon-share-alt" />
+  },
+  print: {
+    icon: <i class="iconfont icon-printer" />
+  }
+};
 
 onMounted(() => {
   pageStore.putEnum(TREE_FILTER_UNIQUE, props.treeFilter.source);
@@ -70,14 +129,6 @@ onMounted(() => {
   //   type: "info",
   //   duration: 10000
   // });
-  // setTimeout(() => {
-  //   ElNotification({
-  //     title: "温馨提示",
-  //     message: "该页面 ProTable 性别搜索框为远程数据搜索，详情可查看代码。",
-  //     type: "info",
-  //     duration: 10000
-  //   });
-  // }, 0);
 });
 
 // 获取 ProTable 元素，调用其获取刷新数据方法（还能获取到当前查询参数，方便导出携带参数）
@@ -100,67 +151,12 @@ const changeTreeFilter = (val: string) => {
   initParam.departmentId = val;
 };
 
-// 模拟远程加载性别搜索框数据
-const loading = ref(false);
-const filterGenderEnum = ref<typeof genderType>([]);
-const remoteMethod = (query: string) => {
-  filterGenderEnum.value.length = 0;
-  if (!query) return;
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-    filterGenderEnum.value.push(...genderType.filter(item => item.label.includes(query)));
-  }, 500);
-};
-console.log(remoteMethod);
-
-// 表格配置项
-// const columns: ColumnProps<User.ResUserList>[] = [
-//   { type: "index", label: "#", width: 80 },
-//   { prop: "username", label: "用户姓名" },
-//   {
-//     prop: "gender",
-//     label: "性别",
-//     sortable: true,
-//     isFilterEnum: false,
-//     enum: filterGenderEnum.value,
-//     search: {
-//       el: "select",
-//       props: { placeholder: "请输入性别查询", filterable: true, remote: true, reserveKeyword: true, loading, remoteMethod }
-//     },
-//     render: scope => <>{scope.row.gender === 1 ? "男" : "女"}</>
-//   },
-//   { prop: "idCard", label: "身份证号" },
-//   { prop: "email", label: "邮箱" },
-//   { prop: "address", label: "居住地址" },
-//   {
-//     prop: "status",
-//     label: "用户状态",
-//     sortable: true,
-//     tag: true,
-//     enum: getUserStatus,
-//     search: { el: "tree-select" },
-//     fieldNames: { label: "userLabel", value: "userStatus" }
-//   },
-//   { prop: "createTime", label: "创建时间", width: 180 },
-//   { prop: "operation", label: "操作", width: 300, fixed: "right" }
-// ];
 const columns: ColumnProps<any>[] = appStore.scenesListConfig.items.map((i: any) => {
   const { type, name, title, ...rest } = i;
   return { ...rest, prop: name, label: title, dataType: type, isShow: true };
 });
-
-// const loading = ref(false);
-// const filterGenderEnum = ref<typeof genderType>([]);
-// const remoteMethod = (query: string) => {
-//   filterGenderEnum.value.length = 0;
-//   if (!query) return;
-//   loading.value = true;
-//   setTimeout(() => {
-//     loading.value = false;
-//     filterGenderEnum.value.push(...genderType.filter(item => item.label.includes(query)));
-//   }, 500);
-// };
+columns.unshift({ type: "selection", fixed: "left", width: 60 });
+columns.push({ prop: "operation", label: "操作", width: 300, fixed: "right" });
 
 const getSearchComponent = (i: any) => {
   const config: any = {
@@ -199,24 +195,113 @@ const searchbarColumns = appStore.scenesSearchbarConfig.items.map((i: any) => {
     search: getSearchComponent(i)
   };
 });
-console.log("abc", columns, searchbarColumns);
 
 // 删除用户信息
-// const deleteAccount = async (params: User.ResUserList) => {
-//   await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
-//   proTable.value?.getTableList();
-// };
+const deleteAccount = async (params: User.ResUserList) => {
+  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
+  proTable.value?.getTableList();
+};
+
+const useAsyncDataSource = () => (field: any) => {
+  field.loading = true;
+  useEnum(
+    data => {
+      // action.bound(data => {
+      field.dataSource = data;
+      field.loading = false;
+      // });
+    },
+    {
+      uniqueKey: field.props.name,
+      source: field.componentProps.source
+    }
+  );
+};
+
+const Operation = ({
+  data,
+  location,
+  button = {},
+  permissions
+}: {
+  data?: any;
+  location: "record" | "multiple" | "single";
+  button?: { [key: string]: any };
+  permissions: string[];
+}) => {
+  return props.operations
+    ?.filter((i: any) => i.location === location)
+    .map(i => {
+      const hiddenText = button.circle === true;
+      const btnProps: any = {
+        onClick: () => {
+          console.log(i.name, data);
+        },
+        key: i.name,
+        disabled: !(data && data.isSelected) && i.selected === true,
+        ...button,
+        type: OperationButtonOptions[i.name].type ?? "",
+        icon: OperationButtonOptions[i.name].icon
+      };
+      // ElButton 对 <ElButton></ElButton> 和 <ElButton/> 解析会不一致
+      const btn = hiddenText ? <ElButton {...btnProps} /> : <ElButton {...btnProps}>{i.title}</ElButton>;
+      return permissions.includes(i.name) && (hiddenText ? <ElTooltip content={i.title}>{btn}</ElTooltip> : btn);
+    });
+};
 
 // 打开 drawer(新增、查看、编辑)
-// const drawerRef = ref<InstanceType<typeof UserDrawer> | null>(null);
-// const openDrawer = (title: string, row: Partial<User.ResUserList> = {}) => {
-//   const params = {
-//     title,
-//     row: { ...row },
-//     isView: title === "查看",
-//     api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
-//     getTableList: proTable.value?.getTableList
-//   };
-//   drawerRef.value?.acceptParams(params);
-// };
+
+const scenesFormConfig = appStore.scenesFormConfig;
+const { SchemaField } = createSchemaField({
+  components: {
+    FormItem,
+    Input,
+    Tab: FormTab,
+    // Box: GramFormBox,
+    GridBox: GramFormGridBox,
+    Select,
+    Upload
+  }
+});
+const DrawerForm = {
+  props: ["form"],
+  data() {
+    const schema = scenesFormConfig.schema;
+    return {
+      schema: {
+        type: "object",
+        properties: {
+          root: schema
+        }
+      }
+    };
+  },
+  render() {
+    return (
+      <FormLayout>
+        <SchemaField schema={this.schema} scope={{ useAsyncDataSource }} />
+        {/* <FormDrawer.Footer>扩展文案 abc</FormDrawer.Footer> */}
+      </FormLayout>
+    );
+  }
+};
+const openForm = (title: string, data: any = null, readPretty: boolean = false) => {
+  FormDrawer(
+    {
+      title,
+      size: "90%"
+    },
+    DrawerForm
+  )
+    .open({
+      initialValues: data || {},
+      readPretty
+    })
+    .then(values => {
+      console.log("values", values);
+    })
+    .catch(e => {
+      console.log(e);
+    });
+};
 </script>
