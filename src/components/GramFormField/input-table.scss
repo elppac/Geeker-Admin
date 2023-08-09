@@ -1,0 +1,35 @@
+.formily-element-plus-array-table {
+  position: relative;
+  border: 1px solid #eee;
+  padding: 0 20px 10px 20px;
+  .header-addition {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    z-index: 10;
+    span {
+      display: none;
+    }
+  }
+  .el-table th {
+    padding: 15px 0;
+  }
+  &-asterisk {
+    color: #f56c6c;
+    margin-right: 4px;
+    display: inline-block;
+    font-family: SimSun, sans-serif;
+    font-weight: normal;
+  }
+  .formily-element-plus-form-item-help {
+    margin-top: -10px;
+    box-shadow: none;
+    padding: 0 10px;
+    background: none;
+    line-height: 18px;
+    width: auto;
+    height: 18px;
+    min-height: auto;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}

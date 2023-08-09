@@ -18,13 +18,13 @@ import { markRaw } from "@formily/reactive";
 import { Grid, IGridOptions } from "@formily/grid";
 import { useFormLayout } from "@formily/element-plus";
 import { ElDivider } from "element-plus";
+import { stylePrefix } from "./constants";
 
 export interface IGramFormGridBoxProps extends IGridOptions {
   grid?: Grid<HTMLElement>;
   prefixCls?: string;
   className?: string;
 }
-const stylePrefix = "formily-element-plus";
 
 const GramFormGridBoxSymbol: InjectionKey<Ref<Grid<HTMLElement>>> = Symbol("GramFormGridBoxContext");
 

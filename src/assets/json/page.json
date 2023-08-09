@@ -118,6 +118,16 @@
       "type": "date"
     },
     {
+      "name": "project",
+      "title": "项目",
+      "type": "array",
+      "bizType": "model",
+      "source": {
+        "type": "list",
+        "value": "project"
+      }
+    },
+    {
       "name": "status",
       "title": "状态",
       "type": "integer",
@@ -187,7 +197,7 @@
                 "x-component-props": {
                   "label": "更多信息"
                 },
-                "fields": ["email", "address"]
+                "fields": ["email", "address", "project"]
               }
             ]
           },
@@ -214,6 +224,19 @@
     "view": {
       "name": "view",
       "title": "商品查看"
+    }
+  },
+  "dependencies": {
+    "project": {
+      "type": "object",
+      "title": "商品图片",
+      "name": "project",
+      "bizType": "model",
+      "source": {
+        "model": "project",
+        "type": "list",
+        "relations": [{ "mainKey": "id", "childKey": "userId" }]
+      }
     }
   }
 }

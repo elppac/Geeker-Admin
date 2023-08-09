@@ -1,0 +1,77 @@
+{
+  "version": "md5",
+  "title": "用户列表",
+  "name": "project",
+  "x-schema": {
+    "type": "object"
+  },
+  "x-reactions": {},
+  "x-model": [
+    {
+      "name": "id",
+      "title": "ID",
+      "type": "integer",
+      "maxLength": 20,
+      "isKey": true,
+      "required": true
+    },
+    {
+      "name": "userId",
+      "title": "User Id",
+      "type": "integer",
+      "maxLength": 20
+    },
+    {
+      "name": "name",
+      "title": "名称",
+      "type": "string",
+      "maxLength": 2000,
+      "required": true
+    },
+    {
+      "name": "pm",
+      "title": "PM",
+      "type": "string",
+      "maxLength": 20,
+      "required": true
+    },
+    {
+      "name": "beginTime",
+      "title": "开始时间",
+      "type": "date",
+      "required": true
+    },
+    {
+      "name": "createTime",
+      "title": "创建时间",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "title": "状态",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "standardStatus"
+      },
+      "maxLength": 20,
+      "required": true
+    }
+  ],
+  "x-field-extra": {},
+  "x-scenes": {
+    "list": {
+      "name": "list",
+      "title": "项目列表",
+      "fields": ["id", "name", "pm", "beginTime", "status"]
+    }
+  },
+  "x-ability": {
+    "inputTable": {
+      "name": "inputTable",
+      "title": "项目列表",
+      "fields": ["name", "pm", "beginTime", "status"]
+    }
+  }
+}

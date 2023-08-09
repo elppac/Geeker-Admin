@@ -51,7 +51,7 @@ const enumMap = inject("enumMap", ref(new Map()));
 console.log("searchbar item render", props.column.prop, props.column);
 let columnEnum: any = computed(() => {
   let enumData = enumMap.value.get(props.column.prop);
-  console.log("searchbar item", props.column.prop, enumData);
+  // console.log("searchbar item", props.column.prop, enumData);
   if (!enumData) return [];
   if (props.column.search?.el === "select-v2" && props.column.fieldNames) {
     enumData = enumData.map((item: { [key: string]: any }) => {

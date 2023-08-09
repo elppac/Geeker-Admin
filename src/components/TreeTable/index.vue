@@ -68,7 +68,7 @@
 import * as _ from "lodash-es";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { FormDrawer, FormLayout, FormItem, Input, FormTab, Select, Upload } from "@formily/element-plus";
+import { FormDrawer, FormLayout, FormItem, Input, FormTab, Select, Upload, DatePicker, InputNumber } from "@formily/element-plus";
 import { ElButton, ElTooltip } from "element-plus";
 import { createSchemaField } from "@formily/vue";
 import { ElMessage } from "element-plus";
@@ -79,14 +79,14 @@ import UserDrawer from "@/views/proTable/components/UserDrawer.vue";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { deleteUser, getUserTreeList } from "@/api/modules/user";
-import { useAppStore } from "@/stores/modules/app";
 import { usePageStore } from "@/stores/modules/page";
 import { User } from "@/api/interface";
-import { GramFormGridBox } from "@/components/GramFormField";
+import { GramFormGridBox, GramFormInputTable, GramFormInputTableAsync } from "@/components/GramFormField";
 import { useEnum } from "@/hooks/useEnum";
 import { usePermissions } from "@/hooks/usePermission";
+import { useModel } from "@/hooks/useModel";
 
-const appStore = useAppStore();
+const { page } = useModel();
 const pageStore = usePageStore();
 const { Permissions } = usePermissions();
 const props = defineProps<{
@@ -151,7 +151,7 @@ const changeTreeFilter = (val: string) => {
   initParam.departmentId = val;
 };
 
-const columns: ColumnProps<any>[] = appStore.scenesListConfig.items.map((i: any) => {
+const columns: ColumnProps<any>[] = page.value?.scenes?.list().items.map((i: any) => {
   const { type, name, title, ...rest } = i;
   return { ...rest, prop: name, label: title, dataType: type, isShow: true };
 });
@@ -186,7 +186,7 @@ const getSearchComponent = (i: any) => {
   }
   return config;
 };
-const searchbarColumns = appStore.scenesSearchbarConfig.items.map((i: any) => {
+const searchbarColumns = page.value?.scenes?.searchbar().items.map((i: any) => {
   const { name, title, ...rest } = i;
   return {
     ...rest,
@@ -204,15 +204,16 @@ const deleteAccount = async (params: User.ResUserList) => {
 
 const useAsyncDataSource = () => (field: any) => {
   field.loading = true;
+  console.log("field", field);
   useEnum(
     data => {
-      // action.bound(data => {
       field.dataSource = data;
       field.loading = false;
-      // });
     },
     {
-      uniqueKey: field.props.name,
+      uniqueKey: `${field.props.name}_${
+        field.componentProps.source.type === "static" ? "static" : field.componentProps.source.value
+      }`,
       source: field.componentProps.source
     }
   );
@@ -251,7 +252,7 @@ const Operation = ({
 
 // 打开 drawer(新增、查看、编辑)
 
-const scenesFormConfig = appStore.scenesFormConfig;
+const scenesFormConfig = page.value?.scenes?.form();
 const { SchemaField } = createSchemaField({
   components: {
     FormItem,
@@ -260,7 +261,11 @@ const { SchemaField } = createSchemaField({
     // Box: GramFormBox,
     GridBox: GramFormGridBox,
     Select,
-    Upload
+    Upload,
+    InputTable: GramFormInputTable,
+    InputTableAsync: GramFormInputTableAsync,
+    DatePicker,
+    InputNumber
   }
 });
 const DrawerForm = {
@@ -280,7 +285,6 @@ const DrawerForm = {
     return (
       <FormLayout>
         <SchemaField schema={this.schema} scope={{ useAsyncDataSource }} />
-        {/* <FormDrawer.Footer>扩展文案 abc</FormDrawer.Footer> */}
       </FormLayout>
     );
   }
@@ -304,4 +308,5 @@ const openForm = (title: string, data: any = null, readPretty: boolean = false) 
       console.log(e);
     });
 };
+// openForm("新增");
 </script>
