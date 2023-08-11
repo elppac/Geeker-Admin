@@ -138,6 +138,57 @@
       },
       "maxLength": 20,
       "required": true
+    },
+    {
+      "name": "basicUnitGroup",
+      "title": "基本单位组",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "#unitGroup/basic"
+      },
+      "required": true
+    },
+    {
+      "name": "basicUnit",
+      "title": "基本单位",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "#unit/basic"
+      },
+      "required": true
+    },
+    {
+      "name": "poUnitGroup",
+      "title": "采购单位组",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "#unitGroup/po"
+      },
+      "required": true
+    },
+    {
+      "name": "poUnit",
+      "title": "采购单位",
+      "type": "integer",
+      "bizType": "enum",
+      "source": {
+        "type": "model",
+        "value": "#unit/po"
+      },
+      "required": true
+    },
+    {
+      "name": "poConversionRate",
+      "title": "采购换算率",
+      "type": "number",
+      "maximum": 99999,
+      "minimum": -99999
     }
   ],
   "x-field-extra": {
@@ -190,6 +241,14 @@
                   "label": "基本信息"
                 },
                 "fields": ["username", "gender", "idCard"]
+              },
+              {
+                "type": "void",
+                "x-component": "GridBox",
+                "x-component-props": {
+                  "label": "复杂联动"
+                },
+                "fields": ["basicUnitGroup", "basicUnit", "poUnitGroup", "poUnit", "poConversionRate"]
               },
               {
                 "type": "void",

@@ -12,9 +12,15 @@ export const getPage = (params: { name: string }) => {
 };
 
 export const getModel = (name: string, params?: any) => {
+  if (name.indexOf("#") === 0) {
+    return http.get(PORT1 + `/${name.substring(1)}`, params);
+  }
   return http.get(PORT1 + `/user/${name}`, params);
 };
 
 export const getDef = (name: string, params?: any) => {
+  if (name.indexOf("#") === 0) {
+    return http.get(PORT1 + `/${name.substring(1)}`, params);
+  }
   return http.get(PORT1 + `/user/${name}`, params);
 };

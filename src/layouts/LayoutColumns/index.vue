@@ -14,9 +14,7 @@
             :class="{ 'split-active': splitActive === item.path || `/${splitActive.split('/')[1]}` === item.path }"
             @click="changeSubMenu(item)"
           >
-            <el-icon>
-              <component :is="item.meta.icon"></component>
-            </el-icon>
+            <Icon :icon="item.meta.icon"></Icon>
             <span class="title">{{ item.meta.title }}</span>
           </div>
         </div>
@@ -57,6 +55,7 @@ import Main from "@/layouts/components/Main/index.vue";
 import ToolBarLeft from "@/layouts/components/Header/ToolBarLeft.vue";
 import ToolBarRight from "@/layouts/components/Header/ToolBarRight.vue";
 import SubMenu from "@/layouts/components/Menu/SubMenu.vue";
+import Icon from "@/layouts/components/Icon.vue";
 
 const title = import.meta.env.VITE_GLOB_APP_TITLE;
 

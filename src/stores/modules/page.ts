@@ -24,7 +24,7 @@ export const usePageStore = defineStore({
     }
   },
   actions: {
-    async putEnum(unique: string, { type, value }: { type: string; value: any }) {
+    async putStore(unique: string, { type, value }: { type: string; value: any }, params?: any) {
       if (!this.store[unique]) {
         if (type === "static") {
           this.store = {
@@ -36,14 +36,14 @@ export const usePageStore = defineStore({
           };
         } else if (type === "model") {
           this.store[unique] = { loading: true };
-          const { data } = await getModel(value);
+          const { data } = await getModel(value, params);
           this.store[unique] = {
             data,
             loading: false
           };
         } else if (type === "def") {
           this.store[unique] = { loading: true };
-          const { data } = await getDef(value);
+          const { data } = await getDef(value, params);
           this.store[unique] = {
             data,
             loading: false

@@ -17,10 +17,11 @@
           </el-icon>
         </template>
         <template #default="{ item }">
-          <el-icon>
+          <!-- <el-icon>
             <component :is="item.meta.icon"></component>
-          </el-icon>
-          <span> {{ item.meta.title }} </span>
+          </el-icon> -->
+          <Icon :icon="item.meta.icon"></Icon>
+          <span>{{ item.meta.title }}</span>
         </template>
       </el-autocomplete>
     </el-dialog>
@@ -32,6 +33,7 @@ import { ref, computed, nextTick } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/modules/auth";
+import Icon from "@/layouts/components/Icon.vue";
 const router = useRouter();
 const authStore = useAuthStore();
 const menuList = computed(() => authStore.flatMenuListGet.filter(item => !item.meta.isHide));

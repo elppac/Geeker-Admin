@@ -45,7 +45,7 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off", // 禁止空函数
     "@typescript-eslint/no-non-null-assertion": "off", // 不允许使用后缀运算符的非空断言(!)
     "@typescript-eslint/adjacent-overload-signatures": "off", // Require that function overload signatures be consecutive.
-    "eslint-disable @typescript-eslint/no-unused-vars": "off", // 开发过程先关闭
+    "@typescript-eslint/no-unused-vars": "off", // 开发过程先关闭
 
     // vue (https://eslint.vuejs.org/rules)
     "vue/script-setup-uses-vars": "error", // 防止<script setup>使用的变量<template>被标记为未使用，此规则仅在启用该no-unused-vars规则时有效

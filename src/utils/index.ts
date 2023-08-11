@@ -295,3 +295,17 @@ export function findItemNested(enumData: any, callValue: any, value: string, chi
     if (current[children]) return findItemNested(current[children], callValue, value, children);
   }, null);
 }
+
+/**
+ * 序列化参数
+ * @param paramsToKey 对象或数组
+ * @returns
+ */
+export function paramsToKey(paramsToKey: { [key: string]: string } | { key: string; value: string }[]) {
+  if (!Array.isArray(paramsToKey)) {
+    return `${Object.keys(paramsToKey)
+      .map((i: string) => [i, paramsToKey[i]].join("-"))
+      .join("|")}`;
+  }
+  return paramsToKey.map(i => [i.key, i.value].join("-")).join("|");
+}

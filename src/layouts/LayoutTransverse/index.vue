@@ -11,17 +11,13 @@
         <template v-for="subItem in menuList" :key="subItem.path">
           <el-sub-menu v-if="subItem.children?.length" :key="subItem.path" :index="subItem.path + 'el-sub-menu'">
             <template #title>
-              <el-icon>
-                <component :is="subItem.meta.icon"></component>
-              </el-icon>
+              <Icon :icon="subItem.meta.icon"></Icon>
               <span>{{ subItem.meta.title }}</span>
             </template>
             <SubMenu :menu-list="subItem.children" />
           </el-sub-menu>
           <el-menu-item v-else :key="subItem.path + 'el-menu-item'" :index="subItem.path" @click="handleClickMenu(subItem)">
-            <el-icon>
-              <component :is="subItem.meta.icon"></component>
-            </el-icon>
+            <Icon :icon="subItem.meta.icon"></Icon>
             <template #title>
               <span>{{ subItem.meta.title }}</span>
             </template>
@@ -41,6 +37,7 @@ import { useRoute, useRouter } from "vue-router";
 import Main from "@/layouts/components/Main/index.vue";
 import ToolBarRight from "@/layouts/components/Header/ToolBarRight.vue";
 import SubMenu from "@/layouts/components/Menu/SubMenu.vue";
+import Icon from "@/layouts/components/Icon.vue";
 
 const title = import.meta.env.VITE_GLOB_APP_TITLE;
 

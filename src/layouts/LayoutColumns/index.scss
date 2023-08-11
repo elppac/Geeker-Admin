@@ -29,21 +29,24 @@
           height: 70px;
           cursor: pointer;
           transition: all 0.3s ease;
-          .el-icon {
+          :deep(.iconfont),
+          :deep(.el-icon) {
             font-size: 20px;
           }
           .title {
             margin-top: 6px;
             font-size: 12px;
           }
-          .el-icon,
+          :deep(.iconfont),
+          :deep(.el-icon),
           .title {
             color: var(--el-menu-text-color);
           }
         }
         .split-active {
           background-color: var(--el-color-primary) !important;
-          .el-icon,
+          :deep(.iconfont),
+          :deep(.el-icon),
           .title {
             color: #ffffff !important;
           }

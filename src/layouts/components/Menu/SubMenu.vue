@@ -2,19 +2,13 @@
   <template v-for="subItem in menuList" :key="subItem.path">
     <el-sub-menu v-if="subItem.children?.length" :index="subItem.path">
       <template #title>
-        <el-icon v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === -1">
-          <component :is="subItem.meta.icon"></component>
-        </el-icon>
-        <i v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === 0" class="iconfont" :class="subItem.meta.icon"></i>
+        <Icon :icon="subItem.meta.icon"></Icon>
         <span class="sle">{{ subItem.meta.title }}</span>
       </template>
       <SubMenu :menu-list="subItem.children" />
     </el-sub-menu>
     <el-menu-item v-else :index="subItem.path" @click="handleClickMenu(subItem)">
-      <el-icon v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === -1">
-        <component :is="subItem.meta.icon"></component>
-      </el-icon>
-      <i v-if="subItem.meta.icon && subItem.meta.icon.indexOf('icon') === 0" class="iconfont" :class="subItem.meta.icon"></i>
+      <Icon :icon="subItem.meta.icon"></Icon>
       <template #title>
         <span class="sle">{{ subItem.meta.title }}</span>
       </template>
@@ -24,6 +18,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
+import Icon from "@/layouts/components/Icon.vue";
 
 defineProps<{ menuList: Menu.MenuOptions[] }>();
 

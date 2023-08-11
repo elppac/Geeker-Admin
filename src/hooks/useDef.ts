@@ -2,7 +2,7 @@ import * as _ from "lodash-es";
 import { usePageStore } from "@/stores/modules/page";
 import { computed, watch } from "vue";
 
-export const useEnum = (
+export const useDef = (
   callback: (data: any[]) => void,
   params: {
     uniqueKey: string;
@@ -15,7 +15,7 @@ export const useEnum = (
 ) => {
   const pageStore = usePageStore();
   const data = computed(() => {
-    return _.get(pageStore.enum, `${params.uniqueKey}.data`) ?? undefined;
+    return _.get(pageStore.store, `${params.uniqueKey}.data`) ?? undefined;
   });
   watch(data, () => {
     callback(data.value as any);

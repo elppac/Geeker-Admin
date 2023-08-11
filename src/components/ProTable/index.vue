@@ -168,7 +168,7 @@ const setEnumMap = async (col: ColumnProps) => {
         enumMap.value.set(col.prop!, data);
       },
       {
-        uniqueKey: `${col.prop}_${col.source.type === "static" ? "static" : col.source.value}`,
+        uniqueKey: `${col.prop}$${col.source.type === "static" ? "static" : col.source.value}`,
         source: col.source
       }
     );
