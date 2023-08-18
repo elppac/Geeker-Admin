@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 import * as _ from "lodash-es";
 import { ISchema } from "@formily/json-schema";
+import { type Reaction } from "@/reaction";
 
 /**
  * 列表场景
@@ -166,7 +167,14 @@ const abilityInputTable = (page: any) => {
   const getColumn = (
     field: any,
     customComponent: any,
-    options?: { name?: string; width?: number; align?: "left" | "center" | "right"; fixed?: "right" | "left"; title?: string }
+    options?: {
+      name?: string;
+      width?: number;
+      align?: "left" | "center" | "right";
+      fixed?: "right" | "left";
+      title?: string;
+      type?: string;
+    }
   ) => {
     const { name, source, ...rest } = field;
     return {
@@ -186,11 +194,16 @@ const abilityInputTable = (page: any) => {
     };
   };
   const columns: any = {};
-  columns.input = getColumn(
+  columns.idx = getColumn(
     {},
-    { name: "input", "x-component": "InputTable.Index", "x-decorator": undefined },
+    { name: "$idx", "x-component": "InputTable.Index", "x-decorator": undefined },
     { title: "Index", align: "center", width: 80 }
   );
+  // columns.selection = getColumn(
+  //   {},
+  //   { name: "$selection", "x-component": "InputTable.Selection", "x-decorator": undefined },
+  //   { title: "Selection", align: "center", width: 80, type: "selection" }
+  // );
   model
     .filter((i: any) => fields.includes(i.name))
     .forEach((i: any) => {
@@ -231,6 +244,11 @@ const abilityInputTable = (page: any) => {
       "x-component": "InputTable.Addition",
       title: "添加条目"
     }
+    // removeAll: {
+    //   type: "void",
+    //   "x-component": "InputTable.RemoveAll",
+    //   title: "选中删除"
+    // }
   };
   console.log("abilityInputTable schema", JSON.stringify(schema));
   return schema;
@@ -254,21 +272,23 @@ export const useModel = (name?: string) => {
     ability?: {
       inputTable: () => any;
     };
+    reactions?: Reaction[];
   }>(() => {
-    const page = pageStore.pageData[pageName];
-    if (!page) {
+    const pageData = pageStore.pageData[pageName];
+    if (!pageData) {
       return {};
     }
     return {
-      pageSchema: page["x-schema"],
+      pageSchema: pageData["x-schema"],
       scenes: {
-        form: () => scenesFormConfig(page),
-        list: () => scenesListConfig(page),
-        searchbar: () => scenesSearchbarConfig(page)
+        form: () => scenesFormConfig(pageData),
+        list: () => scenesListConfig(pageData),
+        searchbar: () => scenesSearchbarConfig(pageData)
       },
       ability: {
-        inputTable: () => abilityInputTable(page)
-      }
+        inputTable: () => abilityInputTable(pageData)
+      },
+      reactions: pageData["x-reactions"]
     };
   });
   pageStore.getPage(pageName);

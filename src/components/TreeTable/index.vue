@@ -86,7 +86,7 @@ import { useEnum } from "@/hooks/useEnum";
 import { usePermissions } from "@/hooks/usePermission";
 import { useModel } from "@/hooks/useModel";
 import { DataField, Field, Form, GeneralField, onFieldReact, onFieldValueChange } from "@formily/core";
-import { useDef } from "@/hooks/useDef";
+import { run as runReaction } from "@/reaction";
 import { paramsToKey } from "@/utils";
 
 const { page } = useModel();
@@ -204,79 +204,12 @@ const deleteAccount = async (params: User.ResUserList) => {
   proTable.value?.getTableList();
 };
 
-const reactions: {
-  react: { name: string; dependencies: string[]; api: string; method: string; property: string }[];
-  affect: { name: string; target: string[]; action: string; property: string }[];
-} = {
-  // 被动响应
-  react: [
-    {
-      name: "basicUnit",
-      dependencies: ["basicUnitGroup"],
-      api: "poUnit",
-      method: "GET",
-      property: "enum"
-    },
-    {
-      name: "poUnit",
-      dependencies: ["poUnitGroup"],
-      api: "poUnit",
-      method: "GET",
-      property: "enum"
-    },
-    {
-      name: "poUnit",
-      dependencies: ["poUnitGroup"],
-      api: "#def/getDefPoUnit",
-      method: "GET",
-      property: "value"
-    },
-    {
-      name: "poConversionRate",
-      dependencies: ["poUnit"],
-      api: "#def/getPoConversionRate",
-      method: "GET",
-      property: "value"
-    }
-    // {
-    //   // def 获取枚举
-    //   name: "poUnit",
-    //   dependencies: ["poUnitGroup", "depend 2"],
-    //   api: "poUnit",
-    //   method: "GET",
-    //   property: "enum"
-    // },
-    // {
-    //   // 没有依赖，获取枚举
-    //   name: "poUnit",
-    //   api: "poUnit",
-    //   method: "GET",
-    //   property: "enum"
-    // }
-  ],
-  // 主动
-  affect: [
-    {
-      name: "basicUnitGroup",
-      target: ["poUnitGroup"],
-      action: "expression#c0", // expression
-      property: "value"
-    }
-    // {
-    //   name: "a",
-    //   target: ["b", "c", "d"],
-    //   action: "", // expression
-    //   property: "visible"
-    // }
-  ]
-};
-
 const useAsyncDataSource = () => (field: Field) => {
   const category = field.componentProps.source.type === "static" ? "static" : field.componentProps.source.value;
   const name = field.props.name;
 
   // 依赖处理
-  const dependencies = _.get(_.first(reactions.react.filter((i: any) => i.name === name)), "dependencies") || [];
+  const dependencies = _.get(_.first((page.value.reactions || []).filter((i: any) => i.name === name)), "dependencies") || [];
   const dependenciesValue: { [key: string]: any } = {};
   if (dependencies.length > 0) {
     const formValues = field.form.values;
@@ -382,7 +315,7 @@ const DrawerForm = {
   render() {
     return (
       <FormLayout>
-        <SchemaField schema={this.schema} scope={{ useAsyncDataSource }} />
+        <SchemaField schema={this.schema as any} scope={{ useAsyncDataSource }} />
       </FormLayout>
     );
   }
@@ -399,51 +332,7 @@ const openForm = (title: string, data: any = null, readPretty: boolean = false) 
       initialValues: data || {},
       readPretty,
       effects: () => {
-        (reactions.react || [])
-          .filter(i => i.property !== "enum")
-          .forEach(i => {
-            onFieldReact(i.name, (field: Field) => {
-              const params: any[] = i.dependencies.map(item => ({ key: item, value: field.query(item).get("value") }));
-              // // TODO 字段空数组未处理
-              const isEmpty = _.some(params, i => [undefined, null].includes(i.value));
-              if (isEmpty) {
-                field.reset();
-              } else {
-                if (i.api) {
-                  useDef(
-                    data => {
-                      if (i.property === "value") {
-                        field.setValue(data);
-                      } else {
-                        // TODO 这里可以做太多事了
-                      }
-                    },
-                    {
-                      uniqueKey: `${i.api}$${paramsToKey(params)}`,
-                      source: {
-                        type: "def",
-                        value: i.api
-                      }
-                    },
-                    params.reduce((pre, cur) => {
-                      pre[cur.key] = cur.value;
-                      return pre;
-                    }, {})
-                  );
-                }
-              }
-            });
-          });
-        (reactions.affect || []).forEach(i => {
-          onFieldValueChange(i.name, (field: Field, form: Form) => {
-            const v = field.value;
-            if (i.action.indexOf("expression#") === 0) {
-              if (i.property === "value") {
-                form.setValues(i.target.reduce((pre, cur) => ({ [cur]: v }), {}));
-              }
-            }
-          });
-        });
+        runReaction(page.value.reactions);
       }
     })
     .then(values => {
@@ -453,5 +342,5 @@ const openForm = (title: string, data: any = null, readPretty: boolean = false) 
       console.log(e);
     });
 };
-openForm("新增");
+// openForm("新增");
 </script>

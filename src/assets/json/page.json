@@ -47,7 +47,6 @@
       }
     }
   },
-  "x-reactions": {},
   "x-model": [
     {
       "name": "id",
@@ -297,5 +296,46 @@
         "relations": [{ "mainKey": "id", "childKey": "userId" }]
       }
     }
-  }
+  },
+  "x-reactions": [
+    {
+      "type": "react",
+      "name": "basicUnit",
+      "dependencies": ["basicUnitGroup"],
+      "api": "poUnit",
+      "method": "GET",
+      "property": "enum"
+    },
+    {
+      "type": "react",
+      "name": "poUnit",
+      "dependencies": ["poUnitGroup"],
+      "api": "poUnit",
+      "method": "GET",
+      "property": "enum"
+    },
+    {
+      "type": "react",
+      "name": "poUnit",
+      "dependencies": ["poUnitGroup"],
+      "api": "#def/getDefPoUnit",
+      "method": "GET",
+      "property": "value"
+    },
+    {
+      "type": "react",
+      "name": "poConversionRate",
+      "dependencies": ["poUnit"],
+      "api": "#def/getPoConversionRate",
+      "method": "GET",
+      "property": "value"
+    },
+    {
+      "type": "affect",
+      "name": "basicUnitGroup",
+      "target": ["poUnitGroup"],
+      "action": "expression#C0",
+      "property": "value"
+    }
+  ]
 }

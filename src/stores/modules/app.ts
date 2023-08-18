@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { getPage } from "@/api/modules/app";
-export type PAGES = { [key: string]: any };
+import { type Reaction } from "@/reaction";
+export type PAGES = { "x-reactions"?: Reaction[]; [key: string]: any };
 export interface AppState {
   pages: PAGES;
 }

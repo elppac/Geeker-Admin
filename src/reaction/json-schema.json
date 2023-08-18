@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://www.jsonschemavalidator.net/s/SzHdbwbO",
+  "title": "reactions",
+  "description": "GRAM 联动表达式",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "type": {
+        "title": "表达式类型",
+        "description": "被动 react 1:N | 主动 affect N:1",
+        "type": "string",
+        "enum": ["react", "affect"]
+      },
+      "name": {
+        "title": "字段名称",
+        "description": "联动主体字段名称",
+        "type": "string"
+      },
+      "dependencies": {
+        "title": "被动依赖字段",
+        "description": "type为react时必填",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "target": {
+        "title": "主动目标字段",
+        "description": "type为affect时必填",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "api": {
+        "title": "api请求地址",
+        "description": "#打头直接使用该地址， 否则使用系统拼接地址",
+        "type": "string"
+      },
+      "method": {
+        "title": "api请求的方法",
+        "description": "默认值为GET",
+        "type": "string",
+        "default": "GET",
+        "enum": ["GET", "POST"]
+      },
+      "property": {
+        "title": "回填数据的位置",
+        "description": "联动操作后回填数据的位置, 比如options通常会回填在enum, input回填在value上",
+        "type": "string",
+        "enum": ["enum", "value", "title", "maxLength", "minLength", "required", "x-visible", "x-disabled", "*"]
+      },
+      "action": {
+        "title": "外部传入的函数",
+        "description": "通过运行时的内置函数来处理联动，可以适当配置入参， 如expression#C0|3 意为使用expression函数, 并传入C0和3两个参数",
+        "type": "string"
+      },
+      "value": {
+        "title": "置入的数据",
+        "description": "优先级较高，谨慎使用， 默认会使用api或action的返回值， 如果设置该值应优先使用， 这个值可以为常量或表单值（通配符），可使用$values.field ",
+        "type": "string"
+      }
+    },
+    "anyOf": [
+      {
+        "not": {
+          "required": ["method"]
+        }
+      },
+      { "required": ["api"] }
+    ],
+    "oneOf": [
+      {
+        "properties": { "type": { "const": "react" } },
+        "required": ["dependencies"]
+      },
+      {
+        "properties": { "type": { "const": "affect" } },
+        "required": ["target"]
+      }
+    ],
+    "required": ["type", "name", "property"]
+  }
+}

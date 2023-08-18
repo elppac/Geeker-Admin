@@ -1,18 +1,19 @@
 /* eslint-disable vue/one-component-per-file */
-import { computed, defineComponent, ref, Ref, h } from "vue";
+import { computed, defineComponent, ref, Ref, h, inject, provide } from "vue";
 import { GeneralField, IVoidFieldFactoryProps, FieldDisplayTypes, ArrayField } from "@formily/core";
 import { useField, RecursionField as _RecursionField, FragmentComponent, useFieldSchema } from "@formily/vue";
 import { observer } from "@formily/reactive-vue";
 import { clone, isArr, isBool, isValid } from "@formily/shared";
 import { Schema } from "@formily/json-schema";
 
-import type { VNode, Component } from "vue";
+import type { VNode, Component, InjectionKey } from "vue";
 import { ElTable, ElTableColumn, ElPagination, ElSelect, ElOption, ElBadge, ElButton, ElTooltip } from "element-plus";
 
 import { Space } from "@formily/element-plus";
 import { ArrayBase } from "@formily/element-plus/esm/array-base/index";
 import { stylePrefix } from "./constants";
-import { CirclePlus } from "@element-plus/icons-vue";
+import { CirclePlus, Delete } from "@element-plus/icons-vue";
+import { toRefs } from "@vue/composition-api";
 
 type ElTableProps = typeof ElTable;
 type ElColumnProps = typeof ElTableColumn;
@@ -40,6 +41,14 @@ type ColumnProps = ElColumnProps & {
   render?: (startIndex?: Ref<number>) => (props: { row: Record<string, any>; column: ElColumnProps; $index: number }) => VNode;
 };
 
+const ArrayTableSymbol: InjectionKey<{
+  selection?: any[];
+  props?: any;
+}> = Symbol("GramArrayTableContext");
+const useTable = () => {
+  return inject(ArrayTableSymbol, {});
+};
+
 const isColumnComponent = (schema: Schema) => {
   return schema["x-component"]?.indexOf("Column") > -1;
 };
@@ -51,11 +60,19 @@ const isOperationsComponent = (schema: Schema) => {
 const isAdditionComponent = (schema: Schema) => {
   return schema["x-component"]?.indexOf("Addition") > -1;
 };
+const isRemoveAllComponent = (schema: Schema) => {
+  return schema["x-component"]?.indexOf("RemoveAll") > -1;
+};
 
 const getArrayTableSources = (arrayFieldRef: Ref<ArrayField>, schemaRef: Ref<Schema>) => {
   const arrayField = arrayFieldRef.value;
   const parseSources = (schema: Schema): ObservableColumnSource[] => {
-    if (isColumnComponent(schema) || isOperationsComponent(schema) || isAdditionComponent(schema)) {
+    if (
+      isColumnComponent(schema) ||
+      isOperationsComponent(schema) ||
+      isAdditionComponent(schema) ||
+      isRemoveAllComponent(schema)
+    ) {
       if (!schema["x-component-props"]?.["prop"] && !schema["name"]) return [];
       const name = schema["x-component-props"]?.["prop"] || schema["name"];
       const field = arrayField.query(arrayField.address.concat(name)).take();
@@ -165,6 +182,22 @@ const renderAddition = () => {
       );
     }
     return addition;
+  }, null);
+};
+const renderRemoveAll = () => {
+  const schemaRef = useFieldSchema();
+  return schemaRef.value.reduceProperties((removeAll, schema) => {
+    if (isRemoveAllComponent(schema)) {
+      return h(
+        RecursionField as any,
+        {
+          schema,
+          name: "removeAll"
+        },
+        {}
+      );
+    }
+    return removeAll;
   }, null);
 };
 
@@ -338,124 +371,154 @@ const ArrayTablePagination = defineComponent({
   }
 });
 
-const ArrayTableInner = observer(
-  defineComponent({
-    name: "GramFormInputTable",
-    inheritAttrs: false,
-    props: ["onChange"],
-    setup(props, { attrs, slots }) {
-      console.log("ipnut table rendered");
-      const fieldRef = useField<ArrayField>();
-      const schemaRef = useFieldSchema();
-      const prefixCls = `${stylePrefix}-array-table`;
-      const defaultRowKey = (record: any, index: number) => {
-        return getKey(record, index);
+const ArrayTableInner = defineComponent({
+  name: "GramFormInputTableInner",
+  inheritAttrs: false,
+  props: ["onChange"],
+  setup(props, { attrs, slots }) {
+    const fieldRef = useField<ArrayField>();
+    const schemaRef = useFieldSchema();
+
+    const prefixCls = `${stylePrefix}-array-table`;
+    const defaultRowKey = (record: any, index: number) => {
+      return getKey(record, index);
+    };
+
+    // const { page } = useModel(attrs?.source?.value);
+    // const schemaRef = computed(() => new Schema(page.value.ability?.inputTable()));
+    const { getKey, keyMap } = ArrayBase.useKey(schemaRef.value);
+
+    // const onSelection = (selected: any) => {
+    //   const table = useTable();
+    //   console.log(table, selected);
+    //   debugger;
+    // };
+    const table = useTable();
+
+    return () => {
+      const props = attrs as unknown as ArrayTableProps;
+      const field = fieldRef.value;
+      const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
+      const pagination = props.pagination;
+      const sources = getArrayTableSources(fieldRef, schemaRef);
+      const columns = getArrayTableColumns(sources);
+
+      // if (!(page && page.value.pageSchema)) {
+      //   return h("div", {}, { default: () => "loading..." });
+      // }
+
+      const renderColumns = (startIndex?: Ref<number>) => {
+        return columns.map(({ key, render, asterisk, ...props }) => {
+          const children = {} as Record<string, any>;
+          if (render) {
+            children.default = render(startIndex);
+          }
+          if (asterisk) {
+            children.header = ({ column }: { column: ElColumnProps }) =>
+              h("span", {}, [
+                h(
+                  "span",
+                  { class: `${prefixCls}-asterisk` },
+                  "*"
+                  // { default: () => ['*'] }
+                ),
+                column.label
+              ]);
+          }
+          return h(
+            ElTableColumn as any,
+            {
+              ...props,
+              // ...(key === 0 ? { type: "selection" } : {}),
+              key
+            },
+            children
+          );
+        });
       };
 
-      // const { page } = useModel(attrs?.source?.value);
-      // const schemaRef = computed(() => new Schema(page.value.ability?.inputTable()));
-      const { getKey, keyMap } = ArrayBase.useKey(schemaRef.value);
-
-      return () => {
-        const props = attrs as unknown as ArrayTableProps;
-        const field = fieldRef.value;
-        const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
-        const pagination = props.pagination;
-        const sources = getArrayTableSources(fieldRef, schemaRef);
-        const columns = getArrayTableColumns(sources);
-
-        // if (!(page && page.value.pageSchema)) {
-        //   return h("div", {}, { default: () => "loading..." });
-        // }
-
-        const renderColumns = (startIndex?: Ref<number>) => {
-          return columns.map(({ key, render, asterisk, ...props }) => {
-            const children = {} as Record<string, any>;
-            if (render) {
-              children.default = render(startIndex);
-            }
-            if (asterisk) {
-              children.header = ({ column }: { column: ElColumnProps }) =>
-                h("span", {}, [
-                  h(
-                    "span",
-                    { class: `${prefixCls}-asterisk` },
-                    "*"
-                    // { default: () => ['*'] }
-                  ),
-                  column.label
-                ]);
-            }
-            return h(
-              ElTableColumn as any,
-              {
-                ...props,
-                key
-              },
-              children
-            );
-          });
-        };
-
-        const renderStateManager = () =>
-          sources.map((column, key) => {
-            //专门用来承接对Column的状态管理
-            if (!isColumnComponent(column.schema)) return;
-            return h(
-              RecursionField as any,
-              {
-                name: column.name,
-                schema: column.schema,
-                onlyRenderSelf: true,
-                key
-              },
-              {}
-            );
-          });
-
-        const renderTable = (dataSource?: any[], pager?: () => VNode, startIndex?: Ref<number>) => {
+      const renderStateManager = () =>
+        sources.map((column, key) => {
+          //专门用来承接对Column的状态管理
+          if (!isColumnComponent(column.schema)) return;
           return h(
-            "div",
-            { class: prefixCls },
-            h(
-              ArrayBase,
-              {
-                keyMap
-              },
-              {
-                default: () => [
-                  h(
-                    ElTable as any,
-                    {
-                      rowKey: defaultRowKey,
-                      ...attrs,
-                      data: dataSource
-                    },
-                    {
-                      ...slots,
-                      default: () => renderColumns(startIndex)
-                    }
-                  ),
-                  pager?.(),
-                  renderStateManager(),
-                  renderAddition()
-                ]
-              }
-            )
+            RecursionField as any,
+            {
+              name: column.name,
+              schema: column.schema,
+              onlyRenderSelf: true,
+              key
+            },
+            {}
           );
-        };
+        });
 
-        if (!pagination) {
-          return renderTable(dataSource);
-        }
+      const renderTable = (dataSource?: any[], pager?: () => VNode, startIndex?: Ref<number>) => {
         return h(
-          ArrayTablePagination,
-          {
-            ...(isBool(pagination) ? {} : pagination),
-            dataSource
-          },
-          { default: renderTable }
+          "div",
+          { class: prefixCls },
+          h(
+            ArrayBase,
+            {
+              keyMap
+            },
+            {
+              default: () => [
+                h(
+                  ElTable as any,
+                  {
+                    rowKey: defaultRowKey,
+                    ...attrs,
+                    onSelectionChange: (selected: any) => {
+                      table.selection = selected;
+                    },
+                    // onSelect: (selected: any) => {
+                    //   const array = ArrayBase.useArray();
+                    //   console.log(selected, array, xx);
+                    //   debugger;
+                    // },
+                    data: dataSource
+                  },
+                  {
+                    ...slots,
+                    default: () => renderColumns(startIndex)
+                  }
+                ),
+                pager?.(),
+                renderStateManager(),
+                renderAddition(),
+                renderRemoveAll()
+              ]
+            }
+          )
         );
+      };
+
+      if (!pagination) {
+        return renderTable(dataSource);
+      }
+      return h(
+        ArrayTablePagination,
+        {
+          ...(isBool(pagination) ? {} : pagination),
+          dataSource
+        },
+        { default: renderTable }
+      );
+    };
+  }
+});
+
+const ArrayTable = observer(
+  defineComponent({
+    name: "GramFormInputTable",
+    setup(props, { slots }) {
+      provide(ArrayTableSymbol, {
+        selection: [],
+        props
+      });
+      return () => {
+        return h(ArrayTableInner, {}, slots);
       };
     }
   })
@@ -521,6 +584,52 @@ const ArrayTableAddition = defineComponent({
   }
 });
 
+const ArrayTableRemoveAll = defineComponent({
+  name: "ArrayTableRemoveAll",
+  props: ["method", "defaultValue", "title"],
+  setup(props, { attrs }) {
+    const self = useField();
+    const array = ArrayBase.useArray();
+    const table = useTable();
+    return () => {
+      if (!array) return null;
+      if (array?.field.value.pattern !== "editable") return null;
+      return h(
+        ElTooltip,
+        { content: self.value.title || props.title },
+        {
+          default: () =>
+            h(
+              ElButton,
+              {
+                ...attrs,
+                ...props,
+                type: "primary",
+                circle: true,
+                class: `header-delete`,
+                icon: Delete,
+                onClick: e => {
+                  if (array.props?.disabled) return;
+                  Object.keys(table?.selection || []).forEach((i: any) => {
+                    const indexRef = ArrayBase.useIndex(i);
+                    if (Array.isArray(array?.keyMap)) {
+                      array?.keyMap?.splice(indexRef.value, 1);
+                    }
+                    array?.field.value.remove(indexRef.value as number);
+                    array?.listeners?.remove?.(indexRef.value as number);
+                  });
+                }
+              },
+              {
+                default: () => [self.value.title || props.title]
+              }
+            )
+        }
+      );
+    };
+  }
+});
+
 const ArrayTableColumn: Component = {
   name: "GramFormInputTableColumn",
   render() {
@@ -528,11 +637,21 @@ const ArrayTableColumn: Component = {
   }
 };
 
-export const GramFormInputTable = Object.assign(ArrayTableInner, {
+const ArrayTableSelection = defineComponent({
+  name: "ArrayTableSelection",
+  setup(props, { attrs }) {
+    const prefixCls = `${stylePrefix}-array-table`;
+    return () => {};
+  }
+});
+
+export const GramFormInputTable = Object.assign(ArrayTable, {
+  Selection: ArrayTableSelection,
   Column: ArrayTableColumn,
   Index: ArrayBase.Index,
   SortHandle: ArrayBase.SortHandle,
   Addition: ArrayTableAddition,
+  RemoveAll: ArrayTableRemoveAll,
   Remove: ArrayBase.Remove,
   MoveDown: ArrayBase.MoveDown,
   MoveUp: ArrayBase.MoveUp,
